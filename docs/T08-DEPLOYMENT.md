@@ -33,6 +33,11 @@
    전체 요청을 Java container로 전달합니다.
 4. Production 환경에 아래 값을 입력합니다.
 
+5. **Settings → Functions → Function Region**에서 Supabase와 같은 서울
+   (`icn1`)을 선택합니다. 2026-09-07 확인 당시 기본값은 미국 동부(`iad1`)였고,
+   Supabase 연결 후 Flyway 초기화 중 15초 container startup timeout이 발생했습니다.
+   리전 변경은 새 배포부터 적용됩니다.
+
 | 환경변수 | 입력값 |
 | --- | --- |
 | `SPRING_PROFILES_ACTIVE` | `prod` |
@@ -42,7 +47,17 @@
 | `T08_WEBAUTHN_RP_ID` | production 호스트명만. 예: `t08-passkey-portfolio.vercel.app` |
 | `T08_WEBAUTHN_ORIGIN` | 정확한 HTTPS origin. 예: `https://t08-passkey-portfolio.vercel.app` |
 | `DB_POOL_MAX` | `3` |
-| `JAVA_TOOL_OPTIONS` | `-XX:MaxRAMPercentage=75.0` |
+| `JAVA_TOOL_OPTIONS` | `-XX:MaxRAMPercentage=75.0 -XX:TieredStopAtLevel=1 -Dspring.main.lazy-initialization=true -Dspring.data.jpa.repositories.bootstrap-mode=lazy` |
+| `PORT` | `80` — 2026-09-07 Production에서 기존 `8080`을 수정 |
+
+`TieredStopAtLevel=1`은 JVM의 고단계 JIT 컴파일을 제한해 기동 부담을 줄입니다.
+장시간 실행 시 최대 처리 성능과 맞바꾸는 선택이며, 이 저트래픽 과제의 짧은
+container 기동 제한에 대응하기 위해 적용했습니다. 인증 검증이나 Flyway/JPA
+스키마 검증은 그대로 실행합니다.
+
+지연 초기화는 일부 오류가 첫 요청에서 드러날 수 있으므로 배포 직후
+`pwsh -File scripts/Verify-Deployment.ps1`로 등록 옵션 API까지 확인합니다.
+이 스크립트는 비밀값을 출력하지 않고 실제 패스키·계정을 만들지 않습니다.
 
 RP ID에는 `https://`와 경로를 넣지 않습니다. Origin에는 마지막 슬래시나 경로를
 붙이지 않습니다. 실제 배포 호스트명이 예시와 다르면 두 값 모두 실제 주소로 바꿉니다.

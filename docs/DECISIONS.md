@@ -3,6 +3,37 @@
 Append-only. Each entry records the decision, the reasoning, and what would reverse
 it. Do not delete entries; supersede them with a later one.
 
+## D-017 · Bind the production TCP socket during Tomcat initialization
+
+**Status:** decided · 2026-09-07 evening
+
+Production attempts established that PORT correction, Seoul co-location and JVM
+startup tuning alone were insufficient. Vercel returned an initialization timeout
+even when the application subsequently completed startup in 7.487 seconds; the
+container preparation time precedes Java startup.
+
+Production now explicitly sets Tomcat's supported `bindOnInit=true` through a
+`WebServerFactoryCustomizer`. The TCP socket is reserved during connector
+initialization. An engine Valve returns only 503, no-store and a fixed startup
+message until `ApplicationReadyEvent`; it then delegates to the unchanged application
+pipeline. An open TCP port is not a successful HTTP health check. Flyway and Hibernate schema
+validation remain enabled. The feature is opt-in via `t08.server.bind-on-init` and
+enabled in the production profile.
+
+The startup regression test probes the actual TCP socket before the context finishes
+initialization, checks that only the fixed 503 startup response is served then, and
+checks that `/private` returns 401 with `no-store` after startup. Initial testing
+showed that early binding alone can allow HTTP handling before context readiness;
+the explicit engine gate closes that window.
+
+**Cost:** a TCP-only platform probe may succeed while the application is not ready;
+the first request may receive 503 and need a retry. Deployment acceptance therefore runs
+`scripts/Verify-Deployment.ps1` through database-backed registration options, not
+just a port check. Failed schema or authentication setup must remain fail-closed.
+
+Sources: [Tomcat HTTP connector](https://tomcat.apache.org/tomcat-11.0-doc/config/http.html),
+[Spring web server customization](https://docs.spring.io/spring-boot/how-to/webserver.html).
+
 ---
 
 ## D-001 · Build T08 as a new repository, not a commit on `myeongjundev.github.io`

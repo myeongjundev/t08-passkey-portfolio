@@ -2,8 +2,29 @@
 
 **Last updated:** 2026-09-07
 
-> 🏠 **작업 중단 지점: `docs/process/HANDOFF-2026-09-07.md` 를 먼저 읽으세요.**
-> 배포가 미완이고, 재배포 전에 Vercel 환경변수 `PORT`를 손으로 지워야 합니다.
+> **Current deployment work:** see `docs/evidence/11-production-startup.md`.
+> Production `PORT` has been corrected to `80`. The old handoff's manual deletion
+> step is superseded. A subsequent 15-second startup timeout is being investigated.
+
+## 2026-09-07 evening — deployment resumed and tests re-run
+
+Prepared the official Temurin JDK 25 outside the repository, verified its download
+checksum and ran `gradlew.bat clean test build --console=plain`: **37 tests passed,
+0 failures, errors or skips**. The previous local JDK blocker is resolved.
+
+Changed the existing Vercel Production `PORT=8080` to `80` and redeployed `abede2c`.
+The image builds, Java starts as `appuser` and Supabase connects successfully, but
+Flyway startup exceeds Vercel's 15-second container startup window before an HTTP
+listener opens. This is new evidence; the earlier port-only diagnosis is incomplete.
+
+The function was running in Washington (`iad1`) while Supabase is in Seoul.
+Changed the function region to Seoul (`icn1`) and started a second deployment.
+HTTP verification is pending. Evidence: `docs/evidence/11-production-startup.md`.
+
+Remaining work: obtain a healthy public deployment, verify physical passkeys and
+storage provider, reconcile C04–C09 with the official source, and have the author
+confirm the personal-judgement section. No acceptance criterion was marked done
+solely because a container build passed.
 
 ## 2026-09-07 Vercel container boot fixed in three steps
 
