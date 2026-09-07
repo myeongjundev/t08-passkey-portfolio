@@ -65,9 +65,13 @@ addForm?.addEventListener('submit', async (event) => {
     });
     window.location.reload();
   } catch (error) {
-    managerStatus.textContent = error?.name === 'NotAllowedError'
-      ? '패스키 추가를 취소했습니다.'
-      : '패스키를 추가하지 못했습니다. 다시 시도해 주세요.';
+    if (error?.name === 'NotAllowedError') {
+      managerStatus.textContent = '패스키 추가를 취소했습니다.';
+    } else if (error?.message === 'nickname_taken') {
+      managerStatus.textContent = '이미 같은 이름의 패스키가 있습니다. 다른 이름을 입력해 주세요.';
+    } else {
+      managerStatus.textContent = '패스키를 추가하지 못했습니다. 다시 시도해 주세요.';
+    }
     button.disabled = false;
   }
 });

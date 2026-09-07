@@ -41,6 +41,10 @@ public class PasskeyManagementService {
     @Transactional
     public AddPasskeyOptions issueOptions(UUID accountId, byte[] ownerKey, String nickname) {
         Account account = accountRepository.findById(accountId).orElseThrow(PasskeyNotFoundException::new);
+        // Reject the collision before the ceremony exists. Issuing consumes any active
+        // ADD_PASSKEY ceremony for this owner, and a failure after `credentials.create()`
+        // would strand a real passkey on the device that the server never stored.
+        requireUnusedNickname(accountId, nickname);
         CeremonyOptions ceremony = ceremonyService.issueAddPasskey(ownerKey, accountId, nickname);
         List<byte[]> existing = credentialRepository.findAllByAccountIdOrderByRegisteredAt(accountId).stream()
                 .map(PasskeyCredential::credentialId)
@@ -55,6 +59,9 @@ public class PasskeyManagementService {
             throw new PasskeyNotFoundException();
         }
         VerifiedRegistration verified = adapter.verifyRegistration(credentialJson, lease.challenge());
+        // Re-checked here because the nickname could have been taken between issuing
+        // this ceremony and finishing it.
+        requireUnusedNickname(accountId, lease.pendingNickname());
         PasskeyCredential saved = credentialRepository.save(PasskeyCredential.create(
                 accountId, verified, lease.pendingNickname(), now()));
         return view(saved);
@@ -78,6 +85,13 @@ public class PasskeyManagementService {
             throw new FinalPasskeyDeletionException();
         }
         credentialRepository.delete(target);
+    }
+
+    /** Matches the stored form: CeremonyService strips the label before persisting it. */
+    private void requireUnusedNickname(UUID accountId, String nickname) {
+        if (nickname != null && credentialRepository.existsByAccountIdAndNickname(accountId, nickname.strip())) {
+            throw new DuplicatePasskeyNicknameException();
+        }
     }
 
     private PasskeyView view(PasskeyCredential credential) {

@@ -20,6 +20,8 @@ public interface PasskeyCredentialRepository extends JpaRepository<PasskeyCreden
 
     List<PasskeyCredential> findAllByAccountIdOrderByRegisteredAt(UUID accountId);
 
+    boolean existsByAccountIdAndNickname(UUID accountId, String nickname);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select credential from PasskeyCredential credential where credential.accountId = :accountId order by credential.registeredAt")
     List<PasskeyCredential> findAllByAccountIdForUpdate(@Param("accountId") UUID accountId);

@@ -85,6 +85,39 @@ class PasskeyManagementServiceTests {
         assertThat(passkeyService.list(account.id())).hasSize(1);
     }
 
+    @Test
+    void duplicateNicknameIsRejectedBeforeTheBrowserCeremonyStarts() {
+        byte[] owner = ownerKey((byte) 51);
+        CeremonyOptions registration = ceremonyService.issueCreateAccount(owner, "합성 중복 계정", "내 기기");
+        var bundle = RegistrationCredentialFixture.createBundle(
+                objectConverter, registration.challenge(), properties.rpId(), properties.origin().toString());
+        var registered = registrationService.finish(registration.id(), owner, bundle.registrationJson());
+        Account account = accountRepository.findById(registered.accountId()).orElseThrow();
+
+        long ceremoniesBefore = ceremonyRepository.count();
+
+        // The nickname collides with the credential created above. This must fail here,
+        // before navigator.credentials.create() puts a real passkey on the device.
+        assertThatThrownBy(() -> passkeyService.issueOptions(account.id(), owner, "내 기기"))
+                .isInstanceOf(DuplicatePasskeyNicknameException.class);
+        assertThatThrownBy(() -> passkeyService.issueOptions(account.id(), owner, "  내 기기  "))
+                .isInstanceOf(DuplicatePasskeyNicknameException.class);
+
+        // No ceremony was created by the rejected attempts, and the account still holds
+        // exactly its first passkey.
+        assertThat(ceremonyRepository.count()).isEqualTo(ceremoniesBefore);
+        assertThat(passkeyService.list(account.id())).singleElement()
+                .extracting(PasskeyView::nickname).isEqualTo("내 기기");
+
+        // A distinct nickname still works.
+        AddPasskeyOptions options = passkeyService.issueOptions(account.id(), owner, "예비 기기");
+        var second = RegistrationCredentialFixture.createBundle(
+                objectConverter, options.ceremony().challenge(), properties.rpId(), properties.origin().toString());
+        passkeyService.finish(account.id(), options.ceremony().id(), owner, second.registrationJson());
+        assertThat(passkeyService.list(account.id())).extracting(PasskeyView::nickname)
+                .containsExactly("내 기기", "예비 기기");
+    }
+
     private void authenticate(Account account,
                               RegistrationCredentialFixture.CredentialBundle bundle,
                               byte ownerValue) {

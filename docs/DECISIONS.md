@@ -300,3 +300,36 @@ ceremony owner and CSRF value are server-side database attributes.
 domain. Vercel preview domains cannot use production passkeys because WebAuthn is
 bound to the exact configured origin; only the canonical production domain is a
 submission target.
+
+---
+
+## D-016 · Reject a duplicate passkey nickname before the browser ceremony starts
+
+**Status:** decided · 2026-09-07
+
+`uq_passkey_account_nickname` makes nicknames unique per account, but
+`PasskeyManagementService.issueOptions` did not check for a collision. The
+violation surfaced only at `save()` inside `finish`, as an unhandled
+`DataIntegrityViolationException` — an HTTP 500.
+
+The timing was the real defect, not the status code. By then
+`navigator.credentials.create()` had already succeeded, so a real passkey existed
+on the user's device while the server transaction rolled back. The user was left
+with a credential the server had no record of and an opaque error, in the exact
+flow Card 4 grades (T08-C42, T08-C43).
+
+**Decision:** the nickname is checked in `issueOptions`, before any ceremony is
+issued — deliberately before, because issuing consumes any active `ADD_PASSKEY`
+ceremony for that owner, so a late failure would also destroy an in-flight one.
+`finish` re-checks to cover the gap between issue and finish. Both raise
+`DuplicatePasskeyNicknameException` → **409 `nickname_taken`**, and the manage
+screen names the collision instead of saying "try again".
+
+`ApiErrorHandler` also maps `DataIntegrityViolationException` → **409 `conflict`**
+as a safety net, so no unique-constraint race can reach a client as a 500. The
+message stays generic because constraint names describe the schema.
+
+**Verified:** removing the pre-check makes
+`PasskeyManagementHttpTests.reusingAnExistingNicknameReturnsConflictNotServerError`
+fail with `expected 409 but was 200` at the options call — the test fails for the
+right reason. Full suite: 37 tests, 0 failures.

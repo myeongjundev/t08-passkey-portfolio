@@ -3,6 +3,32 @@
 **Last updated:** 2026-09-07
 **Phase:** Vercel + Supabase deployment configuration and persistent sessions ready.
 
+## 2026-09-07 duplicate passkey nickname no longer returns 500
+
+Review of the Cards 1-5 implementation found one defect. `issueOptions` did not
+check the per-account nickname uniqueness constraint, so a second passkey reusing
+the first one's nickname failed only at `save()` — after the browser ceremony had
+already created the credential on the device — as an unhandled
+`DataIntegrityViolationException`, i.e. HTTP 500.
+
+The nickname is now checked before any ceremony is issued, re-checked at finish,
+and answered with 409 `nickname_taken`; the manage screen names the collision.
+`DataIntegrityViolationException` maps to 409 `conflict` as a safety net. D-016
+records the reasoning.
+
+Verified by removing the pre-check and watching the new HTTP test fail with
+`expected 409 but was 200` at the options call. Full build: **37 tests, 0
+failures, 0 errors, 0 skipped**; `manage-passkeys.js` passes syntax check.
+
+No acceptance criterion changed status: C42 and C43 already passed with distinct
+nicknames. This was quality of the graded flow, not a gate.
+
+The review also re-verified, live rather than from claims: 35 (now 37) tests pass;
+`/private`, `/api/private-items` and `/api/passkeys` return 401 unauthenticated;
+three consecutive challenges differ; a consumed ceremony is rejected on replay;
+missing/foreign CSRF, wrong Origin and non-JSON bodies are refused (403/403/415);
+the T01 public diff is additive only; and no secret is committed.
+
 ## 2026-09-07 Vercel and Supabase target adopted
 
 Superseded the Render/Neon deployment target with Vercel container functions and

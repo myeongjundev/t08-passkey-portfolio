@@ -100,6 +100,31 @@ class PasskeyManagementHttpTests {
                 .andExpect(jsonPath("$[0].nickname").value("예비 키"));
     }
 
+    @Test
+    void reusingAnExistingNicknameReturnsConflictNotServerError() throws Exception {
+        var registered = enroll();
+        MockHttpSession session = session(registered.accountId());
+
+        // "주 기기" is already taken by the credential created in enroll(). The options
+        // call must refuse it up front, so the browser never starts a ceremony whose
+        // credential the server would then be unable to store.
+        postJson("/api/passkeys/options", session, "{\"nickname\":\"주 기기\"}")
+                .andExpect(status().isConflict())
+                .andExpect(content().json("{\"error\":\"nickname_taken\"}"));
+
+        // Surrounding whitespace must not sneak past the check either.
+        postJson("/api/passkeys/options", session, "{\"nickname\":\"  주 기기 \"}")
+                .andExpect(status().isConflict())
+                .andExpect(content().json("{\"error\":\"nickname_taken\"}"));
+
+        // The account is untouched and a free nickname still works.
+        mockMvc.perform(get("/api/passkeys").session(session))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)));
+        postJson("/api/passkeys/options", session, "{\"nickname\":\"예비 키\"}")
+                .andExpect(status().isOk());
+    }
+
     private SessionPrincipal enroll() {
         byte[] owner = bytes((byte) 51);
         CeremonyOptions options = ceremonyService.issueCreateAccount(owner, "합성 관리 계정", "주 기기");
