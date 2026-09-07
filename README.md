@@ -13,12 +13,13 @@ T01에서 만든 개인 포트폴리오 페이지에 **패스키(WebAuthn)** 로
 [**Decision Log**](docs/DECISIONS.md) ·
 [**Status**](docs/STATUS.md)
 
-`WebAuthn` `Passkey` `Public-key cryptography`
+`Java 25` `Spring Boot 4.1` `webauthn4j` `Thymeleaf` `JPA` `PostgreSQL`
 
 </div>
 
-> 🚧 **작업 준비 단계입니다.** 저장소 구조와 문서만 갖춰진 상태이며 구현 코드는
-> 아직 없습니다. 진행 상황은 [`docs/STATUS.md`](docs/STATUS.md)를 보세요.
+> 🚧 **작업 준비 단계입니다.** 공개 소개 페이지는 서버에서 정상적으로 뜨지만
+> 인증 구현은 아직 시작하지 않았습니다. 진행 상황은
+> [`docs/STATUS.md`](docs/STATUS.md)를 보세요.
 
 > 공개 화면과 문서의 예시는 합성 데이터입니다. 실제 연락처나 신분증 번호 같은
 > 진짜 개인정보는 저장소와 공개 배포에 포함하지 않습니다.
@@ -52,21 +53,41 @@ T01에서 만든 개인 포트폴리오 페이지에 **패스키(WebAuthn)** 로
 전체 과제 원문은 [`docs/T08-TASK.md`](docs/T08-TASK.md)에 있고, 원본 카드 이미지는
 [`docs/task-source/`](docs/task-source/)에 보관되어 있습니다.
 
+## 실행
+
+```bash
+./gradlew bootRun
+```
+
+http://localhost:8080/ 에서 공개 소개 페이지가 열립니다.
+
+> WebAuthn은 origin이 정확히 일치해야 하고 https를 요구합니다. `localhost`만 http
+> 예외로 허용됩니다. 배포 환경에서는 `application.properties`의
+> `t08.webauthn.rp-id`·`t08.webauthn.origin`을 반드시 덮어써야 합니다.
+
 ## 저장소 구조
 
 ```
-public/                  T01 포트폴리오 페이지 (myeongjundev.github.io @ 0ec47fc)
+src/main/java/dev/myeongjun/passkey/
+  web/HomeController.java        공개 소개 페이지 라우트
+src/main/resources/
+  templates/index.html           T01 소개 페이지 (서버 렌더링)
+  static/                        T01 css·js·폰트·이미지
+  application.properties         WebAuthn RP 설정, 데이터소스
 docs/
-  T08-TASK.md            과제 원문 전체
-  REQUIREMENTS.md        구현이 만족해야 하는 요구사항
-  T08-ACCEPTANCE-MATRIX.md  통과 기준 체크리스트 (수정 금지)
-  DECISIONS.md           결정 기록
-  STATUS.md              현재 상태와 다음 할 일
-  task-source/           과제 카드 원본 이미지
-  evidence/              요청·응답 증거 기록
-AGENTS.md                코딩 에이전트 공통 규칙
-CLAUDE.md                Claude 진입점
+  T08-TASK.md                    과제 원문 전체
+  REQUIREMENTS.md                구현이 만족해야 하는 요구사항
+  T08-ACCEPTANCE-MATRIX.md       통과 기준 체크리스트 (수정 금지)
+  DECISIONS.md                   결정 기록
+  STATUS.md                      현재 상태와 다음 할 일
+  task-source/                   과제 카드 원본 이미지
+  evidence/                      요청·응답 증거 기록
+AGENTS.md                        코딩 에이전트 공통 규칙
+CLAUDE.md                        Claude 진입점
 ```
+
+T01 페이지는 `myeongjundev.github.io` 커밋 `0ec47fc` 기준으로 가져왔습니다
+(→ [DECISIONS D-002](docs/DECISIONS.md)).
 
 ## 관련 저장소
 

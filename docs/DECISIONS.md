@@ -55,22 +55,66 @@ satisfied.
 
 ---
 
-## D-004 · Implementation stack
+## D-004 · Implementation stack — Spring Boot 4.1.1 + webauthn4j, Java 25
 
-**Status:** open · 2026-09-07
+**Status:** decided · 2026-09-07
 
-Not yet decided. Constraints that bear on it:
+| Piece | Choice |
+| --- | --- |
+| Language / runtime | Java 25 (LTS) |
+| Framework | Spring Boot 4.1.1, Spring MVC |
+| View | Thymeleaf (server-side rendering) |
+| WebAuthn | `com.webauthn4j:webauthn4j-core:0.29.1.RELEASE` |
+| Persistence | Spring Data JPA — H2 in dev, PostgreSQL in production |
 
-- The T01 page is plain HTML/CSS/JS with no build step, so no frontend framework is
-  required by the existing code.
-- T07 (`t07-plando-see-diary`) used Flask 3 + SQLAlchemy + PostgreSQL on Render with
-  Neon. Reusing that stack means the deployment path is already proven.
-- WebAuthn needs a maintained server-side verification library. Candidates:
-  `py_webauthn` (Python), `webauthn4j` (Java/Spring), `@simplewebauthn/server` (Node).
-- The author's stated focus is Java · Spring Boot · React.
+Reasoning, which also answers T08-C48 (② why that choice):
 
-Record the choice here with reasoning before writing server code — T08-C48 requires
-the submission to state what was used and why.
+- **Java · Spring Boot is the author's primary stack.** T08 is a portfolio-visible
+  piece; building it in the stack being presented is worth more than reusing T07's
+  Flask setup.
+- **webauthn4j is the mature JVM WebAuthn library** and is FIDO-conformance tested.
+  Implementing signature verification, attestation parsing, and challenge validation
+  by hand would be the wrong kind of ambition for a task graded on whether the lock
+  actually holds.
+- **Thymeleaf, not a JSON API plus a client-side framework.** T08-C18 requires that
+  an unauthenticated page response contain no private content anywhere in its source.
+  Server-side rendering makes that a property of the code rather than something to
+  test for afterwards. The T01 page is plain HTML with no build step, so it drops
+  into a Thymeleaf template unchanged.
+- **H2 in dev, PostgreSQL in production** mirrors the T07 deployment path.
+
+**Layout:** the Spring Boot project sits at the repository root. The vendored T01
+page splits into `src/main/resources/templates/index.html` (the rendered page) and
+`src/main/resources/static/` (css, js, fonts, images).
+
+**Verified:** `./gradlew build` passes and `./gradlew bootRun` serves the T01 page at
+`http://localhost:8080/` with `styles.css` and `script.js` resolving (200).
+
+---
+
+## D-006 · No Spring Security
+
+**Status:** decided · 2026-09-07
+
+`webauthn4j-core` is used directly rather than `webauthn4j-spring-security`, and
+Spring Security is not on the classpath at all.
+
+- Spring Security's default configuration serves a **form login page with a password
+  field**. T08-C35 requires that no password input exists anywhere in the
+  deliverable. Leaving that default on would fail the task outright, and carrying a
+  dependency whose defaults contradict the assignment is a standing risk.
+- T08-C41 requires the submission to point at the source location that produces the
+  authorization rejections. A plain `HandlerInterceptor` guarding the private routes
+  is a single file to point at; a Spring Security filter chain is not.
+- The authorization model here is trivial — a session either carries a verified
+  passkey identity or it does not.
+
+**Cost:** session fixation protection, CSRF tokens, and security headers must be
+handled deliberately instead of arriving by default. Track this; it is a strong
+candidate for the "what is still not locked down" section (T08-C51).
+
+**Reverses if:** the private area grows roles or shared access, at which point
+hand-rolled authorization stops being the simpler option.
 
 ---
 
