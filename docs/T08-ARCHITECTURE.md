@@ -91,7 +91,7 @@ flowchart LR
     W --> DB[(PostgreSQL)]
     P --> DB
 
-    subgraph Render Docker Service
+    subgraph Vercel Container Function
       MVC
       G
       W
@@ -318,7 +318,7 @@ CSRF token만 넣는다. 로그아웃은 POST로만 받고 session을 무효화�
 
 | 항목 | Local | Production |
 | --- | --- | --- |
-| Cookie | `JSESSIONID`, HttpOnly, SameSite=Lax | 동일 + Secure |
+| Cookie | opaque session ID, HttpOnly, SameSite=Lax | 동일 + Secure, JDBC-backed |
 | Session timeout | 30분 | 30분 |
 | URL rewriting | 사용 안 함 | 사용 안 함 |
 | CSRF | session token + `X-CSRF-Token` | 동일 |
@@ -423,20 +423,21 @@ WebAuthn4J adapter 검사는 library test fixture를 별도 test helper 안에 �
 
 ## 13. 배포 설계
 
-Render의 단일 Docker service와 Neon PostgreSQL을 사용한다.
+Vercel의 OCI container function과 Supabase PostgreSQL을 사용한다.
 
 1. Gradle multi-stage image에서 bootJar를 만든다.
 2. runtime image는 non-root 사용자와 Java 25 runtime만 둔다.
 3. Flyway가 schema를 적용하고 JPA는 `validate`만 한다.
-4. `/api/live`는 process 생존만, `/api/health`는 DB를 확인한다.
+4. `/health`는 DB 연결을 확인하되 상세 오류나 연결 정보를 노출하지 않는다.
 5. 공개 root와 access page는 HTTPS에서 열린다.
+6. 무상태 container 간 로그인 유지를 위해 HttpSession도 PostgreSQL에 저장한다.
 
 필수 서버 설정:
 
 | 설정 | 값 |
 | --- | --- |
-| `SPRING_DATASOURCE_URL` | Neon PostgreSQL TLS URL |
-| `SPRING_DATASOURCE_USERNAME/PASSWORD` | Render secret |
+| `SPRING_DATASOURCE_URL` | Supabase Session pooler JDBC TLS URL, port 5432 |
+| `SPRING_DATASOURCE_USERNAME/PASSWORD` | Vercel encrypted environment variable |
 | `T08_WEBAUTHN_RP_ID` | 배포 host, scheme 없음 |
 | `T08_WEBAUTHN_ORIGIN` | 정확한 `https://host` |
 | `T08_WEBAUTHN_RP_NAME` | 화면 표시 이름 |
@@ -467,7 +468,7 @@ domain을 같은 credential로 섞지 않는다. 운영에는 canonical domain �
 - 등록된 authenticator를 모두 잃으면 비밀번호·이메일 복구가 없어 계정을 되찾을 수 없다.
 - attestation을 요구하지 않으므로 특정 보안키 모델이나 하드웨어 보증을 확인하지 않는다.
 - sign counter가 항상 0인 syncable passkey에서는 clone 신호를 얻을 수 없다.
-- 단일 Render instance의 `HttpSession`은 재시작 시 사라져 다시 로그인해야 한다.
+- JDBC 세션 저장소를 사용할 수 없는 동안에는 새 로그인과 비공개 접근이 실패한다.
 - WebAuthn은 origin에 강하게 묶이므로 domain 변경 시 기존 passkey를 그대로 이전할 수 없다.
 - 브라우저·OS의 passkey UI는 애플리케이션이 완전히 통제하거나 동일하게 재현할 수 없다.
 

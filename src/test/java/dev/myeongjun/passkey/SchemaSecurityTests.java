@@ -16,7 +16,7 @@ class SchemaSecurityTests {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void flywayCreatedTheFiveDomainTables() {
+    void flywayCreatedTheDomainAndPersistentSessionTables() {
         List<String> tables = jdbcTemplate.queryForList(
                 """
                 SELECT TABLE_NAME
@@ -31,7 +31,9 @@ class SchemaSecurityTests {
                 "PASSKEY_CREDENTIALS",
                 "WEBAUTHN_CEREMONIES",
                 "PRIVATE_ITEMS",
-                "SECURITY_EVENTS"
+                "SECURITY_EVENTS",
+                "SPRING_SESSION",
+                "SPRING_SESSION_ATTRIBUTES"
         );
     }
 

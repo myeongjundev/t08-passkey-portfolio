@@ -25,6 +25,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-flyway'
+	implementation 'org.springframework.session:spring-session-jdbc'
 
 	// WebAuthn / passkey verification. Deliberately the plain library, not
 	// webauthn4j-spring-security: T08 forbids passwords, and Spring Security's

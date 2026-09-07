@@ -111,8 +111,10 @@ assignment page and fill the gap in the acceptance matrix.
 - Private repositories select ownership only from the server session account ID.
 - Session cookies are Secure, HttpOnly and SameSite=Lax in production; authentication
   rotates the session ID and logout invalidates it server-side.
-- Render connects to Neon with PostgreSQL TLS. Secrets remain server environment
+- Vercel connects to Supabase with PostgreSQL TLS. Secrets remain server environment
   variables and never enter source, frontend bundles, responses or committed evidence.
+- Login and anonymous ceremony sessions are JDBC-backed so stateless container
+  scaling and restarts do not silently lose the server-side authentication boundary.
 - Security events and evidence share central redaction. Raw challenge, credential
   JSON, signature, session/CSRF value, DB secret and original IP are prohibited.
 - Response headers, rate limits, payload limits, negative authorization paths and

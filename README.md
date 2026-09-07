@@ -68,7 +68,7 @@ http://localhost:8080/ 에서 공개 소개 페이지가 열립니다.
 > 예외로 허용됩니다. 배포 환경에서는 `application.properties`의
 > `t08.webauthn.rp-id`·`t08.webauthn.origin`을 반드시 덮어써야 합니다.
 
-운영 배포는 저장소의 `render.yaml`과 `Dockerfile`을 사용합니다. 필요한 환경변수와
+운영 배포는 저장소의 `Dockerfile.vercel`과 Supabase PostgreSQL을 사용합니다. 필요한 환경변수와
 검증 순서는 [`docs/T08-DEPLOYMENT.md`](docs/T08-DEPLOYMENT.md)에 정리했습니다.
 
 ## 저장소 구조

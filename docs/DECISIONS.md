@@ -277,3 +277,26 @@ server session.
 **Reason:** copying credential machinery would add forbidden password fields and
 unneeded bearer secrets. Reusing the threat and verification discipline preserves
 the useful security work while keeping T08 genuinely passkey-only.
+
+---
+
+## D-015 · Deploy the Java container on Vercel with Supabase PostgreSQL
+
+**Status:** decided · 2026-09-07 · supersedes the Render/Neon deployment target and
+the in-process-session cost recorded in D-010
+
+Vercel detects `Dockerfile.vercel` and runs the Spring Boot Java 25 image as a
+stateless container function. Supabase supplies the persistent PostgreSQL database
+through its TLS Session pooler on port 5432; the transaction pooler is excluded
+because Hibernate uses prepared statements.
+
+Because Vercel container instances can scale down or serve different requests, the
+default in-process `HttpSession` is no longer adequate. The production profile uses
+Spring Session JDBC, and Flyway owns the two session tables. Only the opaque session
+ID remains in the Secure, HttpOnly, SameSite cookie. Account identity, anonymous
+ceremony owner and CSRF value are server-side database attributes.
+
+**Cost:** application data and session availability now share the Supabase failure
+domain. Vercel preview domains cannot use production passkeys because WebAuthn is
+bound to the exact configured origin; only the canonical production domain is a
+submission target.

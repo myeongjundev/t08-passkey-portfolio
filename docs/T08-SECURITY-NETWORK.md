@@ -10,10 +10,10 @@ token·password 정책은 복사하지 않는다. T08의 인증 자격은 authen
 
 ```mermaid
 flowchart LR
-    U[사용자 브라우저] -->|HTTPS 443| E[Render TLS edge]
-    E -->|platform proxy| A[Spring Boot container]
+    U[사용자 브라우저] -->|HTTPS 443| E[Vercel TLS edge]
+    E -->|container function| A[Spring Boot container]
     U <-->|WebAuthn local API| K[기기·보안키 authenticator]
-    A -->|TLS PostgreSQL| D[(Neon PostgreSQL)]
+    A -->|TLS PostgreSQL 5432| D[(Supabase Session pooler)]
 
     subgraph Untrusted
       U
@@ -51,32 +51,32 @@ flowchart LR
 | XSS·클릭재킹·기능 남용 | CSP, frame-ancestors none, nosniff, Permissions-Policy | 모든 응답 헤더 자동 검사 |
 | 공개 등록·로그인 자동화 | IP HMAC 기반 DB rate limit, options 활성 건수 제한, 요청 크기 제한 | 임계 전후 429·재시작 후 유지 |
 | 로그·증거 유출 | 중앙 redaction, raw challenge/session/signature/credential JSON/IP 금지 | 이벤트·증거·빌드·Git 패턴 감사 |
-| DB 연결 도청·비밀 노출 | Neon TLS, secret은 Render 환경변수, 브라우저 번들·Git 배제 | 배포 설정 이름·비밀값 0건 감사 |
+| DB 연결 도청·비밀 노출 | Supabase TLS, secret은 Vercel 환경변수, 브라우저 번들·Git 배제 | 배포 설정 이름·비밀값 0건 감사 |
+| container 재시작·분산 요청 | 인증·CSRF·ceremony owner를 JDBC HttpSession으로 공유 | DB 직렬화·복원 통합 테스트 |
 | 공급망·컨테이너 피해 | 버전 고정, 전체 테스트, multi-stage build, non-root runtime | dependency/build/image 검사 |
 
 ## 3. 네트워크 정책
 
 ### Ingress
 
-- 외부 공개 포트는 Render edge의 HTTPS 443 하나다.
+- 외부 공개 포트는 Vercel edge의 HTTPS 443 하나다.
 - `/`와 `/access`만 익명 사용자용 화면이다. 보호 URI는 애플리케이션에서도 다시
   세션을 검사하므로 edge 설정 오류가 곧 자료 공개로 이어지지 않는다.
-- `/api/live`는 프로세스 생존만 반환하고 내부 버전·환경·DB 정보를 내보내지 않는다.
-  DB readiness가 필요하면 일반 사용자에게 상세 오류를 내보내지 않는 별도 검사로 둔다.
+- `/health`는 DB readiness와 `UP`만 반환하고 내부 버전·환경·DB 정보를 내보내지 않는다.
 - 관리·debug·H2 console·Actuator 상세 endpoint는 production에서 공개하지 않는다.
 
 ### Egress와 DB
 
-- 정상 애플리케이션 egress는 Neon PostgreSQL TLS 연결뿐이다. Passkey 검증은 외부 인증
+- 정상 애플리케이션 egress는 Supabase PostgreSQL TLS 연결뿐이다. Passkey 검증은 외부 인증
   서비스 호출 없이 서버 안에서 끝난다.
-- Render Free에서 네트워크 egress allow-list를 강제할 수 없다면 이를 운영 한계로 적고,
+- Vercel container의 고정 egress IP를 사용할 수 없으므로 이를 운영 한계로 적고,
   애플리케이션이 임의 URL을 받거나 호출하는 기능을 만들지 않는다.
 - DB 계정은 애플리케이션 schema에 필요한 최소 권한만 사용한다. migration 권한 분리는
   호스팅 제약과 함께 배포 단계에서 결정하고 기록한다.
 
 ## 4. 세션·쿠키·응답
 
-- 운영 쿠키: `JSESSIONID; Secure; HttpOnly; SameSite=Lax; Path=/`.
+- 운영 쿠키: 불투명 session ID만 담고 `Secure; HttpOnly; SameSite=Lax; Path=/`를 적용한다.
 - URL rewriting을 끄고 세션 ID를 URL·응답 JSON·브라우저 저장소에 넣지 않는다.
 - 인증·private·passkey ceremony 응답은 `Cache-Control: no-store`다.
 - 기본 응답 헤더는 `Content-Security-Policy`, `Referrer-Policy: no-referrer`,
@@ -120,9 +120,8 @@ DB 이벤트·worktree·빌드·Git 이력의 범위를 함께 적는다.
 ## 7. 현재 남은 위험
 
 - 누구나 공개 등록을 시작할 수 있어 분산 IP를 이용한 계정 생성 남용은 완전히 막지 못한다.
-- Render와 Neon 사이 연결은 TLS이지만 전용 사설망이라고 주장하지 않는다.
-- 단일 인스턴스 메모리 세션은 재시작 때 사라지며, 다중 인스턴스 확장 전에는 공유 세션
-  저장소가 없다.
+- Vercel과 Supabase 사이 연결은 TLS이지만 전용 사설망이라고 주장하지 않는다.
+- JDBC 세션 저장소 장애 시 로그인 상태를 확인할 수 없으므로 비공개 접근도 실패한다.
 - CSP가 있어도 같은 출처의 허용 스크립트가 변조되면 CSRF 방어를 우회할 수 있다.
 - authenticator를 모두 잃으면 이메일·비밀번호·관리자 복구가 없어 계정을 복구할 수 없다.
 - syncable passkey의 sign counter가 0이면 복제 탐지 신호가 제한된다.

@@ -24,7 +24,7 @@
 - [ ] DB 기반 options/finish 속도 제한과 요청 크기 제한
 - [ ] session fixation 방지·Secure/HttpOnly/SameSite·서버 logout 검증
 - [ ] 중앙 redaction과 security event 저장
-- [ ] Render HTTPS·Neon TLS·production HSTS 검증
+- [ ] Vercel HTTPS·Supabase TLS·production HSTS 검증
 - [ ] worktree·build·Git evidence secret-pattern 감사
 
 각 기능의 성공 경로는 같은 주소·같은 방식의 거절 또는 재생 경로와 한 쌍으로 구현한다.
@@ -143,9 +143,9 @@ Acceptance: T08-C42~C46
 - [ ] session cookie HttpOnly·SameSite=Lax·production Secure
 - [ ] cache-control no-store on ceremony/auth/private responses
 - [ ] common error envelope과 secret redaction
-- [ ] `/api/live`, `/api/health`
+- [x] DB-backed `/health`
 - [ ] production `ddl-auto=validate`
-- [ ] Dockerfile·Render·Neon 설정
+- [x] Dockerfile.vercel·Vercel·Supabase 설정
 - [ ] PostgreSQL migration·concurrency test
 
 ## Slice 8 — 실제 브라우저와 제출 증거
@@ -183,4 +183,4 @@ git status --short --branch
 - [ ] 공개 HTML·JS·source map에 private fixture 없음
 - [ ] password 문자열 검사는 설명 문서의 금지 설명과 실제 input/schema를 구분
 - [ ] Git object 전체에서 secret-like 값 0건
-- [ ] Render 배포 commit과 제출 commit 40자가 일치
+- [ ] Vercel 배포 commit과 제출 commit 40자가 일치

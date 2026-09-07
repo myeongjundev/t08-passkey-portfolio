@@ -1,7 +1,30 @@
 # Status
 
 **Last updated:** 2026-09-07
-**Phase:** Public source submitted; HTTPS deployment configuration ready.
+**Phase:** Vercel + Supabase deployment configuration and persistent sessions ready.
+
+## 2026-09-07 Vercel and Supabase target adopted
+
+Superseded the Render/Neon deployment target with Vercel container functions and
+Supabase PostgreSQL. Added `Dockerfile.vercel`, removed `render.yaml`, and rewrote the
+deployment handoff with the Supabase Session pooler TLS settings. D-015 records the
+decision and its security trade-offs.
+
+Vercel containers are stateless, so the production profile now replaces in-process
+`HttpSession` with Spring Session JDBC. Flyway V2 creates the two session tables and
+`SessionPrincipal` supports safe Java serialization. The focused production-profile
+test persisted and restored the synthetic principal, CSRF value and ceremony-owner
+bytes successfully. Evidence: `docs/evidence/10-vercel-supabase-session-readiness.md`.
+
+The complete build passed with 35 tests. `Dockerfile.vercel` built successfully and
+its production-profile container returned 200 from `/health` and `/access`, issued
+the opaque `SESSION` cookie, and ran as UID 10001. The local verification container
+was stopped afterward.
+
+Next external work: create the Supabase project, enter its Session pooler values in
+Vercel, deploy the canonical production URL and perform physical passkey verification.
+C26 and the deployment URL criteria remain pending; C04 through C09 still require
+the missing official assignment source.
 
 ## 2026-09-07 source published and deployment handoff prepared
 
