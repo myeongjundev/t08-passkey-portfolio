@@ -2,9 +2,23 @@
 
 **Last updated:** 2026-09-07
 
-> **Current deployment work:** see `docs/evidence/11-production-startup.md`.
-> Production `PORT` has been corrected to `80`. The old handoff's manual deletion
-> step is superseded. A subsequent 15-second startup timeout is being investigated.
+> **Current deployment:** healthy at `https://t08-passkey-portfolio.vercel.app`.
+> See `docs/evidence/11-production-startup.md`. Physical passkey verification,
+> C26, the author's C53 wording and missing official criteria C04–C09 remain.
+
+## 2026-09-08 — Vercel production deployment healthy
+
+Commit `eebe09e` adds an opt-in production startup boundary: Tomcat reserves port 80
+early, but a Valve returns only fixed 503/no-store until Spring publishes
+`ApplicationReadyEvent`. The first cold request received this safe 503; five seconds
+later the complete deployment script passed health, public/private boundaries,
+fresh challenge issuance, cancellation, Origin and CSRF checks against the canonical
+HTTPS URL.
+
+The full JDK 25 build passes with **38 tests, 0 failures, 0 errors, 0 skipped**.
+T08-C01, C03, C10, C11 and C52 are now done. Remaining captured criterion: C26,
+which requires an actual device/provider observation. C04–C09 still require the
+official assignment source, and the author must confirm the personal C53 wording.
 
 ## 2026-09-07 evening — deployment resumed and tests re-run
 

@@ -75,5 +75,16 @@ Do not treat Vercel's build `Ready` status alone as application readiness.
   the post-ready unauthenticated `/private` 401. Early binding alone was not enough
   to guarantee the pre-ready HTTP boundary; the explicit gate was added after that
   initial test exposed the behavior.
+- Commit `eebe09e` was pushed to `main` and deployed automatically.
+- The first production `/health` request returned 503 with `Cache-Control: no-store`,
+  `Retry-After: 2` and only the fixed startup message. Five seconds later the full
+  deployment verification script passed:
+  - `/health`, `/` and `/access`: 200.
+  - unauthenticated `/private`, `/api/private-items`, `/api/passkeys`: 401 and no-store.
+  - two registration-option requests: 200 with different redacted challenges and
+    the canonical RP ID.
+  - registration cancellation: 204; foreign Origin and missing CSRF: 403.
+- Production URL: `https://t08-passkey-portfolio.vercel.app`.
+- No physical passkey or account was created during this automated verification.
 
 No database password, session cookie, CSRF token or credential payload is included.

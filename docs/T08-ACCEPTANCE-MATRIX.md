@@ -63,11 +63,11 @@ Evidence paths are relative to `docs/evidence/`.
 
 | ID | Criterion | Status | Evidence |
 | --- | --- | --- | --- |
-| T08-C01 | 결과물 URL 필드에 HTTPS URL 한 개가 제출되어 있다. | todo | |
+| T08-C01 | 결과물 URL 필드에 HTTPS URL 한 개가 제출되어 있다. | done | 11-production-startup.md · ../T08-SUBMISSION.md |
 | T08-C02 | 소스 URL 필드에 HTTPS URL 한 개가 제출되어 있다. | done | 09-public-source-and-deployment-readiness.md · ../T08-SUBMISSION.md |
-| T08-C03 | 제출한 모든 URL(결과물·소스)은 계정 생성·로그인·인증·초대·비밀번호·OAuth·CAPTCHA 없이 새 시크릿 창에서 열린다. | todo | |
-| T08-C10 | 결과물 주소의 첫 화면은 공개 소개 페이지이고, 심사하는 사람이 아무것도 등록하지 않아도 열린다. | todo | |
-| T08-C11 | 1번 과제에서 만든 소개 페이지에 이어 붙였고, 1번의 공개 내용이 그대로 남아 있다. | todo | |
+| T08-C03 | 제출한 모든 URL(결과물·소스)은 계정 생성·로그인·인증·초대·비밀번호·OAuth·CAPTCHA 없이 새 시크릿 창에서 열린다. | done | 09-public-source-and-deployment-readiness.md · 11-production-startup.md |
+| T08-C10 | 결과물 주소의 첫 화면은 공개 소개 페이지이고, 심사하는 사람이 아무것도 등록하지 않아도 열린다. | done | 11-production-startup.md |
+| T08-C11 | 1번 과제에서 만든 소개 페이지에 이어 붙였고, 1번의 공개 내용이 그대로 남아 있다. | done | 01-public-private-boundary.md · 11-production-startup.md |
 | T08-C12 | 제출물에 실제 개인정보가 없고, 넣은 내용이 만들어 넣은 것이라는 사실이 적혀 있다. | done | 01-public-private-boundary.md · ../T08-SUBMISSION.md |
 
 > **T08-C04 – T08-C09 are not captured in the source images.** They are presumably
@@ -94,7 +94,7 @@ Evidence paths are relative to `docs/evidence/`.
 | T08-C49 | ③에 등록·로그인·로그아웃·비공개 자료 조회 네 흐름이 소스의 어디를 지나는지 적혀 있다. | done | ../T08-AUTH-GUIDE.md |
 | T08-C50 | ④에 확인 네 가지(로그인 없이 열기, 남의 패스키로 열기, 이미 쓴 질문 재사용, 패스키 삭제 뒤 로그인)가 모두 있고, 각각 성공한 요청과 거절된 요청이 나란히 적혀 있다. | done | ../T08-AUTH-GUIDE.md |
 | T08-C51 | ⑥에 아직 못 막은 것이 최소 하나 구체적으로 적혀 있다. 없다고만 적으면 통과하지 않는다. | done | ../T08-AUTH-GUIDE.md |
-| T08-C52 | 짧은 확인 방법에 ① 어디로 가나요, ② 세 단계 안에 무엇을 하나요, ③ 무엇이 보이면 통과인가요, ④ 안 될 때는 무엇이 보이나요가 각각 나뉘어 적혀 있다. | wip | ../T08-SUBMISSION.md |
+| T08-C52 | 짧은 확인 방법에 ① 어디로 가나요, ② 세 단계 안에 무엇을 하나요, ③ 무엇이 보이면 통과인가요, ④ 안 될 때는 무엇이 보이나요가 각각 나뉘어 적혀 있다. | done | ../T08-SUBMISSION.md |
 | T08-C53 | 제출문에 ① AI에게 맡긴 일, ② 내가 직접 판단한 일, ③ AI 제안을 따르지 않은 일(없다면 왜 없었는지)이 각각 나뉘어 적혀 있다. | done | ../T08-SUBMISSION.md |
 
 ---
@@ -110,7 +110,7 @@ Evidence paths are relative to `docs/evidence/`.
 
 ## Deliverables (제출물)
 
-- [ ] 공개 결과물 주소 (HTTPS)
+- [x] 공개 결과물 주소 (HTTPS)
 - [x] 소스 주소 (HTTPS)
 - [x] 인증 구현 설명서 여섯 항목 → `docs/T08-AUTH-GUIDE.md`
 - [x] 짧은 확인 방법 4줄 → `docs/T08-SUBMISSION.md`
