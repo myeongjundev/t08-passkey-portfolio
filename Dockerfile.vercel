@@ -15,11 +15,15 @@ WORKDIR /app
 RUN useradd --system --uid 10001 --create-home appuser
 COPY --from=build /workspace/build/libs/*.jar /app/app.jar
 
-ENV PORT=8080
+ENV PORT=80
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH=/opt/java/openjdk/bin:$PATH
+# Vercel routes to port 80. Ports below 1024 are privileged, so grant the JVM
+# launcher the one capability it needs instead of running the app as root.
+RUN apt-get update  && apt-get install -y --no-install-recommends libcap2-bin  && setcap 'cap_net_bind_service=+ep' /opt/java/openjdk/bin/java  && apt-get purge -y libcap2-bin  && apt-get autoremove -y  && rm -rf /var/lib/apt/lists/*
+
 USER 10001
-EXPOSE 8080
+EXPOSE 80
 
 # Absolute path on purpose. Vercel starts the container with its own environment,
 # so the base image's PATH is not guaranteed to survive; a bare "java" here failed
