@@ -57,6 +57,14 @@ class T08PasskeyPortfolioApplicationTests {
 	}
 
 	@Test
+	void healthCheckConfirmsTheApplicationCanReachItsDatabase() throws Exception {
+		mockMvc.perform(get("/health"))
+				.andExpect(status().isOk())
+				.andExpect(header().string("Cache-Control", "no-store"))
+				.andExpect(content().json("{\"status\":\"UP\"}"));
+	}
+
+	@Test
 	void hstsIsOnlyAddedToSecureResponses() throws Exception {
 		mockMvc.perform(get("/"))
 				.andExpect(header().doesNotExist("Strict-Transport-Security"));

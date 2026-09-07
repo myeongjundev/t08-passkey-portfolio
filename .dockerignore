@@ -1,0 +1,13 @@
+.git
+.github
+.gradle
+build
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+.idea
+.vscode
+docs/task-source
+*.log

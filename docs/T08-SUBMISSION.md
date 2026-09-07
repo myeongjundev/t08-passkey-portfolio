@@ -3,7 +3,7 @@
 ## 제출 URL
 
 - 결과물 HTTPS URL: `[배포 후 입력]`
-- 소스 HTTPS URL: `[GitHub 공개 후 입력]`
+- 소스 HTTPS URL: `https://github.com/myeongjundev/t08-passkey-portfolio`
 
 ## 짧은 확인 방법
 

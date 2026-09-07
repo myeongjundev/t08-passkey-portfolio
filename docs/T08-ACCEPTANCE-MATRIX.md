@@ -64,7 +64,7 @@ Evidence paths are relative to `docs/evidence/`.
 | ID | Criterion | Status | Evidence |
 | --- | --- | --- | --- |
 | T08-C01 | 결과물 URL 필드에 HTTPS URL 한 개가 제출되어 있다. | todo | |
-| T08-C02 | 소스 URL 필드에 HTTPS URL 한 개가 제출되어 있다. | todo | |
+| T08-C02 | 소스 URL 필드에 HTTPS URL 한 개가 제출되어 있다. | done | 09-public-source-and-deployment-readiness.md · ../T08-SUBMISSION.md |
 | T08-C03 | 제출한 모든 URL(결과물·소스)은 계정 생성·로그인·인증·초대·비밀번호·OAuth·CAPTCHA 없이 새 시크릿 창에서 열린다. | todo | |
 | T08-C10 | 결과물 주소의 첫 화면은 공개 소개 페이지이고, 심사하는 사람이 아무것도 등록하지 않아도 열린다. | todo | |
 | T08-C11 | 1번 과제에서 만든 소개 페이지에 이어 붙였고, 1번의 공개 내용이 그대로 남아 있다. | todo | |
@@ -111,7 +111,7 @@ Evidence paths are relative to `docs/evidence/`.
 ## Deliverables (제출물)
 
 - [ ] 공개 결과물 주소 (HTTPS)
-- [ ] 소스 주소 (HTTPS)
+- [x] 소스 주소 (HTTPS)
 - [x] 인증 구현 설명서 여섯 항목 → `docs/T08-AUTH-GUIDE.md`
 - [x] 짧은 확인 방법 4줄 → `docs/T08-SUBMISSION.md`
 - [x] AI와 내 판단 3줄 → `docs/T08-SUBMISSION.md`

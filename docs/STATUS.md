@@ -1,7 +1,30 @@
 # Status
 
 **Last updated:** 2026-09-07
-**Phase:** Cross-account isolation and write-up complete; deployment evidence remains.
+**Phase:** Public source submitted; HTTPS deployment configuration ready.
+
+## 2026-09-07 source published and deployment handoff prepared
+
+Committed the complete Cards 1–5 implementation as `05a85ae` and pushed `main` to
+the public HTTPS repository. The source URL is now fixed in `T08-SUBMISSION.md`, so
+T08-C02 is done.
+
+Added a Java 25 multi-stage Docker build, a non-root runtime, a Render Blueprint and
+strict production properties. Production now requires PostgreSQL credentials plus
+the exact WebAuthn RP ID and HTTPS origin instead of silently using local H2 and
+localhost. `/health` checks database readiness without returning connection details.
+`T08-DEPLOYMENT.md` records the secret-free setup and physical passkey verification
+sequence.
+
+Verification passed with 34 tests and no failures or errors. The Docker image also
+built successfully, ran as UID 10001 rather than root, and returned 200 with
+`{"status":"UP"}` from its database-backed health check. Evidence:
+`docs/evidence/09-public-source-and-deployment-readiness.md`.
+
+Remaining external work: connect Render to PostgreSQL, enter deployment-only
+environment values, verify the public HTTPS origin and record the physical passkey
+storage provider for T08-C26. The deployed URL is still required for C01, C03, C10,
+C11 and completion of C52. C04 through C09 still require the missing official source.
 
 ## 2026-09-07 cross-account isolation and write-up complete
 
