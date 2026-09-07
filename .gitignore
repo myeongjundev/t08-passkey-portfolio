@@ -1,0 +1,36 @@
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+
+# Dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+target/
+build/
+dist/
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+coverage/
+.coverage
+*.log
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f0e9">
+  <title>김명준 — Full-stack Developer</title>
+  <meta name="description" content="설계와 구현 사이를 연결하는 풀스택 개발자 김명준의 포트폴리오입니다.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="fonts/pretendard.css">
+  <link rel="stylesheet" href="styles.css?v=6a0b44a-2">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="맨 위로 이동">
+      <span class="brand__mark">MJ</span>
+      <span>김명준</span>
+    </a>
+    <nav class="nav" aria-label="주요 메뉴">
+      <a href="#about">About</a>
+      <a href="#work">Work</a>
+      <a href="#screens">Screens</a>
+    </nav>
+    <a class="header-link" href="https://github.com/myeongjundev" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero__copy">
+        <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> FULL-STACK DEVELOPER · JAVA / REACT</p>
+        <h1 id="hero-title">백엔드의 구조를 설계하고,<br><em>화면까지 완성합니다.</em></h1>
+        <p class="hero__intro">이 페이지는 <strong>신입 개발자를 뽑거나 함께 팀을 이룰 사람</strong>에게, 협업 규칙을 세우고 API 설계부터 화면까지 완성하는 힘을 보여주기 위해 만들었습니다.</p>
+        <ul class="hero-stack" aria-label="주요 기술">
+          <li><span aria-hidden="true">◆</span> Java 21</li>
+          <li><span aria-hidden="true">◆</span> Spring Boot</li>
+          <li><span aria-hidden="true">◆</span> MySQL</li>
+          <li><span aria-hidden="true">◆</span> React 19</li>
+        </ul>
+        <div class="hero__actions">
+          <a class="button button--primary" href="#work">프로젝트 보기 <span aria-hidden="true">↓</span></a>
+          <a class="button button--ghost" href="https://github.com/myeongjundev" target="_blank" rel="noreferrer">GitHub 방문 <span aria-hidden="true">↗</span></a>
+          <button class="button button--scope" type="button" data-open-scope>공개 범위 확인 <span aria-hidden="true">＋</span></button>
+        </div>
+      </div>
+
+      <aside class="dev-card" aria-label="개발자 프로필 요약">
+        <div class="dev-card__bar">
+          <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>myeongjun.profile.ts</span>
+          <span>UTF-8</span>
+        </div>
+        <div class="dev-card__code" aria-hidden="true">
+          <p><span class="code-key">const</span> <span class="code-var">developer</span> = {</p>
+          <p class="code-indent"><span class="code-prop">name</span>: <span class="code-string">'김명준'</span>,</p>
+          <p class="code-indent"><span class="code-prop">role</span>: <span class="code-string">'Full-stack Developer'</span>,</p>
+          <p class="code-indent"><span class="code-prop">focus</span>: [</p>
+          <p class="code-indent2"><span class="code-string">'API Design'</span>, <span class="code-string">'Web UI'</span>,</p>
+          <p class="code-indent2"><span class="code-string">'Team Convention'</span></p>
+          <p class="code-indent">],</p>
+          <p class="code-indent"><span class="code-prop">ships</span>: <span class="code-bool">true</span></p>
+          <p>};</p>
+        </div>
+        <div class="dev-card__profile">
+          <div class="dev-card__avatar" aria-hidden="true">MJ</div>
+          <div>
+            <p class="dev-card__name">김명준 <span>Myeongjun Kim</span></p>
+            <p class="dev-card__role">API 설계부터 사용자 화면까지</p>
+          </div>
+          <span class="dev-card__status"><i aria-hidden="true"></i> BUILDING</span>
+        </div>
+        <div class="dev-card__terminal" aria-hidden="true">
+          <span class="terminal-prompt">$</span>
+          <span>git status</span>
+          <span class="terminal-result">ready to ship<span class="terminal-cursor"></span></span>
+        </div>
+      </aside>
+
+      <div class="hero__foot">
+        <p>01 · DESIGN THE STRUCTURE</p>
+        <p>02 · BUILD BOTH SIDES</p>
+        <p>03 · SHIP WITH THE TEAM</p>
+      </div>
+    </section>
+
+    <section class="about section" id="about" aria-labelledby="about-title">
+      <div class="section-head reveal">
+        <p class="section-index">01 / ABOUT</p>
+        <h2 id="about-title">좋은 제품은<br>좋은 합의에서 시작됩니다.</h2>
+      </div>
+      <div class="about__content reveal">
+        <p class="about__lead">코드를 쓰기 전에 팀이 같은 방향을 보도록 만들고, 설계가 실제 사용자 경험으로 이어지는지 끝까지 확인합니다.</p>
+        <div class="about__grid">
+          <article>
+            <span class="mini-index">01</span>
+            <h3>먼저 정리합니다</h3>
+            <p>API 계약과 DB 스키마를 하나의 기준으로 만들고, 이슈·브랜치·PR 규칙을 팀과 합의했습니다.</p>
+          </article>
+          <article>
+            <span class="mini-index">02</span>
+            <h3>관계를 설계합니다</h3>
+            <p>기능을 만드는 데서 멈추지 않고 사용자, 데이터, 권한 사이의 관계를 명확하게 나눕니다.</p>
+          </article>
+          <article>
+            <span class="mini-index">03</span>
+            <h3>화면까지 완성합니다</h3>
+            <p>백엔드 구조를 이해한 상태에서 실제 화면을 구현해 설계와 경험 사이의 간극을 줄입니다.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="project section" id="work" aria-labelledby="project-title">
+      <div class="project__intro reveal">
+        <div>
+          <p class="section-index">02 / FEATURED WORK</p>
+          <h2 id="project-title">CLOV</h2>
+        </div>
+        <p>친구와 약속을 만들고, 함께 인증한 순간을 추억으로 쌓는 우정 기록 서비스입니다.</p>
+      </div>
+
+      <div class="project-stage reveal">
+        <img src="assets/clov-promise.jpg" width="1400" height="684" alt="CLOV 약속 화면. 약속 티켓과 인증 단계가 표시되어 있다.">
+        <div class="project-stage__tag">PRODUCT DESIGN & DEVELOPMENT</div>
+      </div>
+
+      <div class="project-meta reveal">
+        <div>
+          <span>Role</span>
+          <strong>팀장 · Full-stack</strong>
+        </div>
+        <div>
+          <span>Contribution</span>
+          <strong>API 설계 — 화면 구현</strong>
+        </div>
+        <div>
+          <span>Repositories</span>
+          <p class="repo-links">
+            <a href="https://github.com/Pickeslog/clov-api" target="_blank" rel="noreferrer">API ↗</a>
+            <a href="https://github.com/Pickeslog/clov-web" target="_blank" rel="noreferrer">WEB ↗</a>
+          </p>
+        </div>
+      </div>
+
+      <div class="case-list">
+        <article class="case reveal">
+          <div class="case__number">01</div>
+          <div class="case__title">
+            <p>Collaboration system</p>
+            <h3>흩어질 규칙을 먼저<br>정하고 시작했습니다.</h3>
+          </div>
+          <div class="case__story">
+            <dl>
+              <div><dt>Challenge</dt><dd>프론트와 백엔드가 API 형태와 DB 스키마를 서로 다르게 이해할 위험이 있었습니다.</dd></div>
+              <div><dt>Action</dt><dd>설계 저장소를 단일 기준으로 삼고, 이슈 하나에 브랜치와 PR 하나를 연결하는 규칙을 제안했습니다.</dd></div>
+              <div><dt>Result</dt><dd>변경의 맥락을 저장소 기록만으로 추적하고, 새 구성원도 문서 한 곳에서 API를 파악할 수 있게 됐습니다.</dd></div>
+            </dl>
+          </div>
+        </article>
+
+        <article class="case reveal">
+          <div class="case__number">02</div>
+          <div class="case__title">
+            <p>Authorization design</p>
+            <h3>권한을 관계 중심의<br>두 단계로 나눴습니다.</h3>
+          </div>
+          <div class="case__story">
+            <dl>
+              <div><dt>Challenge</dt><dd>공간 밖의 접근을 막는 일과 공간 안에서 남의 글을 수정하지 못하게 하는 일은 다른 문제였습니다.</dd></div>
+              <div><dt>Action</dt><dd>공간 구성원 여부를 먼저 확인하고, 수정·삭제 요청에는 작성자 본인인지 한 번 더 검증했습니다.</dd></div>
+              <div><dt>Result</dt><dd>역할 테이블을 늘리지 않고도 소속과 작성자 관계만으로 단순하고 명확한 인가 모델을 만들었습니다.</dd></div>
+            </dl>
+          </div>
+        </article>
+
+        <article class="case reveal">
+          <div class="case__number">03</div>
+          <div class="case__title">
+            <p>Frontend architecture</p>
+            <h3>화면 코드에서<br>API 호출을 걷어냈습니다.</h3>
+          </div>
+          <div class="case__story">
+            <dl>
+              <div><dt>Challenge</dt><dd>요청 코드가 여러 화면에 흩어지면 주소나 인증 방식이 바뀔 때 수정 범위를 알기 어렵습니다.</dd></div>
+              <div><dt>Action</dt><dd>서버 호출을 <code>src/api/</code> 아래 도메인별 모듈로 모으고 화면은 공개 함수만 사용하게 했습니다.</dd></div>
+              <div><dt>Result</dt><dd>API 주소와 인증 헤더 변경 지점이 한곳으로 모이고, 화면은 데이터 표현에 집중할 수 있게 됐습니다.</dd></div>
+            </dl>
+          </div>
+        </article>
+      </div>
+
+      <div class="stack-block reveal">
+        <p>Selected stack</p>
+        <ul aria-label="사용 기술">
+          <li><img src="https://cdn.simpleicons.org/openjdk/171914" alt="" width="20" height="20" loading="lazy">Java 21</li>
+          <li><img src="https://cdn.simpleicons.org/spring/171914" alt="" width="20" height="20" loading="lazy">Spring Boot</li>
+          <li><span class="stack-icon stack-icon--type" aria-hidden="true">M</span>MyBatis</li>
+          <li><img src="https://cdn.simpleicons.org/mysql/171914" alt="" width="20" height="20" loading="lazy">MySQL</li>
+          <li><img src="https://cdn.simpleicons.org/react/171914" alt="" width="20" height="20" loading="lazy">React 19</li>
+          <li><img src="https://cdn.simpleicons.org/vite/171914" alt="" width="20" height="20" loading="lazy">Vite</li>
+          <li><img src="https://cdn.simpleicons.org/jsonwebtokens/171914" alt="" width="20" height="20" loading="lazy">JWT</li>
+          <li><span class="stack-icon stack-icon--type" aria-hidden="true">O</span>OAuth2</li>
+          <li><img src="https://cdn.simpleicons.org/docker/171914" alt="" width="20" height="20" loading="lazy">Docker</li>
+          <li><img src="https://cdn.simpleicons.org/git/171914" alt="" width="20" height="20" loading="lazy">Git</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="gallery section" id="screens" aria-labelledby="screens-title">
+      <div class="gallery__head reveal">
+        <p class="section-index">03 / SELECTED SCREENS</p>
+        <h2 id="screens-title">만든 화면들</h2>
+        <p>서비스의 주요 흐름을 직접 구현했습니다. 참여자 이름과 아바타는 공개하지 않았습니다.</p>
+      </div>
+      <div class="gallery__grid">
+        <figure class="shot shot--wide reveal">
+          <div class="shot__media"><img src="assets/clov-shop.jpg" width="1400" height="693" loading="lazy" alt="등급별 마스코트 의상이 나열된 CLOV 상점 화면"></div>
+          <figcaption><span>01</span><strong>마스코트 상점</strong><em>Reward system</em></figcaption>
+        </figure>
+        <figure class="shot reveal">
+          <div class="shot__media"><img src="assets/clov-rooms.jpg" width="1200" height="1180" loading="lazy" alt="정렬과 초대 코드 입력을 제공하는 CLOV 우정공간 목록"></div>
+          <figcaption><span>02</span><strong>우정공간 목록</strong><em>Space management</em></figcaption>
+        </figure>
+        <figure class="shot reveal">
+          <div class="shot__media"><img src="assets/clov-feed.jpg" width="1200" height="1536" loading="lazy" alt="월별 아카이브와 검색이 있는 CLOV 추억 피드"></div>
+          <figcaption><span>03</span><strong>추억 피드</strong><em>Memory archive</em></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="contact section reveal" aria-labelledby="contact-title">
+      <p class="section-index">04 / CONTACT</p>
+      <h2 id="contact-title">함께 만들 다음 장면을<br><em>기다리고 있습니다.</em></h2>
+      <p>연락은 GitHub 프로필을 통해 받습니다.</p>
+      <a class="contact__link" href="https://github.com/myeongjundev" target="_blank" rel="noreferrer">github.com/myeongjundev <span aria-hidden="true">↗</span></a>
+    </section>
+  </main>
+
+  <dialog class="scope-dialog" id="scope-dialog" aria-labelledby="scope-title">
+    <div class="scope-dialog__top">
+      <p class="section-index">PUBLIC SCOPE</p>
+      <button class="scope-dialog__close" type="button" data-close-scope aria-label="공개 범위 닫기">×</button>
+    </div>
+    <h2 id="scope-title">무엇을 공개했나요?</h2>
+    <p class="scope-dialog__intro">이 페이지에 담을 정보와 담지 않을 정보는 직접 구분했습니다.</p>
+    <dl class="scope-dialog__list">
+      <div>
+        <dt><span aria-hidden="true">○</span> 공개</dt>
+        <dd>이름 · 기술 스택 · 맡은 역할 · 프로젝트 저장소 · 개인정보를 가린 결과 화면</dd>
+      </div>
+      <div>
+        <dt><span aria-hidden="true">—</span> 비공개</dt>
+        <dd>전화번호 · 이메일 · 얼굴 · 생년월일 · 상세 주소 · 팀원 신원 · 비밀번호와 비밀값</dd>
+      </div>
+    </dl>
+    <p class="scope-dialog__note">연락은 공개된 GitHub 프로필을 통해서만 받습니다.</p>
+  </dialog>
+
+  <footer class="footer">
+    <p>© 2026 Myeongjun Kim</p>
+    <p>Designed & built with intention.</p>
+    <a href="#top">Back to top ↑</a>
+  </footer>
+
+  <script src="script.js?v=6a0b44a-2"></script>
+</body>
+</html>
