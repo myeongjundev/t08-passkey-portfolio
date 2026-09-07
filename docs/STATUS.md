@@ -1,6 +1,33 @@
 # Status
 
 **Last updated:** 2026-09-07
+
+> 🏠 **작업 중단 지점: `docs/process/HANDOFF-2026-09-07.md` 를 먼저 읽으세요.**
+> 배포가 미완이고, 재배포 전에 Vercel 환경변수 `PORT`를 손으로 지워야 합니다.
+
+## 2026-09-07 Vercel container boot fixed in three steps
+
+Deployment stalled on container startup, not on application code. Three causes,
+each fixed and verified locally before pushing:
+
+1. `cfe44c0` — `exec: "java": executable file not found in $PATH`. Vercel starts the
+   container with its own environment, so the base image PATH was gone. ENTRYPOINT now
+   uses the absolute path `/opt/java/openjdk/bin/java`.
+2. `0debc37` — moved to port 8080 on the theory that Vercel honours the `PORT`
+   variable. It does not; the proxy kept routing to 80. Superseded.
+3. `2cdd299` — granted the JVM launcher `cap_net_bind_service` so the non-root image
+   can bind port 80, rather than running as root. Verified with
+   `net.ipv4.ip_unprivileged_port_start=1024` enforced so the bind could not succeed
+   by accident: `uid=10001`, `Tomcat started on port 80`, `/health` → 200.
+
+**Pending manual step:** the `PORT=8080` Vercel environment variable added during
+step 2 must be deleted before redeploying, or the app will listen on 8080 while
+Vercel routes to 80 again.
+
+Supabase is provisioned in Seoul with the Data API disabled, and the production
+domain `t08-passkey-portfolio.vercel.app` matches the configured RP ID and origin.
+The database connection has not been exercised yet — that is the next gate after
+the container boots.
 **Phase:** Vercel + Supabase deployment configuration and persistent sessions ready.
 
 ## 2026-09-07 duplicate passkey nickname no longer returns 500
