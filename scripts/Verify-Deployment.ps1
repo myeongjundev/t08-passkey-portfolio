@@ -6,6 +6,24 @@ param(
 $ErrorActionPreference = 'Stop'
 $BaseUri = $BaseUri.TrimEnd('/')
 $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+$startupMessage = 'Service is starting. Please retry shortly.'
+
+function Test-StartupResponse($Response) {
+    return [int]$Response.StatusCode -eq 503 -and `
+        $Response.Content.Trim() -eq $startupMessage
+}
+
+function Invoke-Get([string]$Path) {
+    foreach ($attempt in 1..10) {
+        $response = Invoke-WebRequest "$BaseUri$Path" -WebSession $session `
+            -SkipHttpErrorCheck -TimeoutSec 60
+        if (-not (Test-StartupResponse $response)) { return $response }
+
+        Write-Host "GET $Path is starting; retry $attempt/10"
+        Start-Sleep -Seconds 2
+    }
+    throw "GET $Path remained in startup state after 10 attempts"
+}
 
 function Assert-Status($Response, [int]$Expected, [string]$Label) {
     if ([int]$Response.StatusCode -ne $Expected) {
@@ -15,30 +33,37 @@ function Assert-Status($Response, [int]$Expected, [string]$Label) {
 }
 
 function Send-Json([string]$Path, $Body, [hashtable]$Headers) {
-    # PowerShell retains request headers on WebRequestSession; clear them so
-    # negative checks cannot accidentally reuse the previous CSRF/Origin.
-    $session.Headers.Clear()
-    Invoke-WebRequest -Uri "$BaseUri$Path" -Method Post -WebSession $session `
-        -ContentType 'application/json' -Headers $Headers `
-        -Body ($Body | ConvertTo-Json -Compress -Depth 10) `
-        -SkipHttpErrorCheck -TimeoutSec 60
+    foreach ($attempt in 1..10) {
+        # PowerShell retains request headers on WebRequestSession; clear them so
+        # negative checks cannot accidentally reuse the previous CSRF/Origin.
+        $session.Headers.Clear()
+        $response = Invoke-WebRequest -Uri "$BaseUri$Path" -Method Post -WebSession $session `
+            -ContentType 'application/json' -Headers $Headers `
+            -Body ($Body | ConvertTo-Json -Compress -Depth 10) `
+            -SkipHttpErrorCheck -TimeoutSec 60
+        if (-not (Test-StartupResponse $response)) { return $response }
+
+        Write-Host "POST $Path is starting; retry $attempt/10"
+        Start-Sleep -Seconds 2
+    }
+    throw "POST $Path remained in startup state after 10 attempts"
 }
 
-$health = Invoke-WebRequest "$BaseUri/health" -SkipHttpErrorCheck -TimeoutSec 60
+$health = Invoke-Get '/health'
 Assert-Status $health 200 'GET /health'
 if (($health.Content | ConvertFrom-Json).status -ne 'UP') { throw 'Health is not UP' }
 
-$public = Invoke-WebRequest "$BaseUri/" -SkipHttpErrorCheck -TimeoutSec 60
+$public = Invoke-Get '/'
 Assert-Status $public 200 'GET /'
 foreach ($path in @('/private', '/api/private-items', '/api/passkeys')) {
-    $response = Invoke-WebRequest "$BaseUri$path" -SkipHttpErrorCheck -TimeoutSec 60
+    $response = Invoke-Get $path
     Assert-Status $response 401 "Unauthenticated GET $path"
     if ($response.Headers['Cache-Control'] -notmatch 'no-store') {
         throw "Private response is missing no-store: $path"
     }
 }
 
-$access = Invoke-WebRequest "$BaseUri/access" -WebSession $session -SkipHttpErrorCheck -TimeoutSec 60
+$access = Invoke-Get '/access'
 Assert-Status $access 200 'GET /access'
 $csrfMatch = [regex]::Match($access.Content, '<meta name="csrf-token" content="([^"]+)"')
 if (-not $csrfMatch.Success) { throw 'CSRF meta tag missing' }

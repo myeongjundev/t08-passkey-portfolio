@@ -1,6 +1,9 @@
 # Status
 
-**Last updated:** 2026-09-07
+**Last updated:** 2026-09-08
+
+> 학원에서 이어서 작업할 때는 `docs/process/HANDOFF-2026-09-08-ACADEMY.md`부터
+> 읽으세요. 실행 순서, 완료 조건, 복구 절차가 최신 상태로 정리돼 있습니다.
 
 > **Current deployment:** healthy at `https://t08-passkey-portfolio.vercel.app`.
 > See `docs/evidence/11-production-startup.md`. Physical passkey verification,
