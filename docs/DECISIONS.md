@@ -129,3 +129,151 @@ attached to each.
 
 Whatever is chosen must keep the public first screen open to anyone with no
 registration at all (T08-C10).
+
+---
+
+## D-007 · A successful first passkey registration creates the account
+
+**Status:** decided · 2026-09-07 · supersedes the open part of D-005
+
+There is no pre-seeded account and no account row before WebAuthn registration
+passes. The server creates an opaque 32-byte user handle and a pending ceremony;
+after WebAuthn4J verifies the response, one transaction creates the account, its
+first credential and three synthetic private items.
+
+The user supplies only a synthetic display label and a passkey nickname. There is
+no email, phone number, invite code or password. A cancelled or failed ceremony
+leaves no account or credential row. A second test account follows the same flow.
+
+**Reason:** pre-seeded empty accounts would let the first visitor claim them, while
+an invite code would become another shared secret and conflict with the public URL
+requirements. Open passkey-first registration is the smallest complete passwordless
+bootstrap and makes the two-account isolation test reproducible.
+
+**Cost:** public registration can be abused to create synthetic accounts. Bound
+active ceremonies and request sizes now; record stronger enrollment control as a
+known limitation rather than disguising an invite or password as a passkey flow.
+
+---
+
+## D-008 · Use discoverable credentials and require user verification
+
+**Status:** decided · 2026-09-07
+
+Registration uses `residentKey=required`, `requireResidentKey=true` and
+`userVerification=required`. Authentication leaves `allowCredentials` empty. The
+credential ID and opaque `userHandle` returned by the authenticator identify the
+account after server verification.
+
+**Reason:** the user can sign in without first typing an account identifier, and
+the public authentication options do not reveal registered credential IDs. W3C
+defines this as the discoverable-credential flow.
+
+**Cost:** authenticators without discoverable credentials or local user verification
+cannot use the private area. The screen must explain that limitation without adding
+a password fallback.
+
+---
+
+## D-009 · Persist and consume WebAuthn ceremonies in the database
+
+**Status:** decided · 2026-09-07
+
+Every registration and authentication options request creates a database ceremony
+with a 32-byte server-generated challenge, a five-minute expiry and a kind. The
+first finish attempt consumes it under a row lock in a separate transaction before
+cryptographic verification. Failed verification does not make the challenge usable
+again.
+
+**Reason:** a browser-only challenge would not prevent replay. A database row makes
+expiry, kind, cancellation and concurrent replay testable and keeps the rule valid
+if the application process restarts.
+
+**Cost:** a transient table and cleanup job are required. Raw challenges must never
+appear in committed evidence; compare redacted fingerprints instead.
+
+---
+
+## D-010 · Use server HttpSession with explicit Origin and CSRF guards
+
+**Status:** decided · 2026-09-07
+
+After assertion verification the server invalidates the anonymous session and
+creates a new session containing only `SessionPrincipal(accountId)` and a fresh CSRF
+token. `JSESSIONID` is HttpOnly, SameSite=Lax and Secure in production. Every state
+change, including pre-login ceremonies, requires configured Origin, JSON content
+type and the session CSRF header.
+
+**Reason:** T08 asks the submission to say whether a session or token identifies the
+user. A server session is smaller than a custom JWT lifecycle and can be invalidated
+immediately on logout. D-006 excluded Spring Security, so fixation protection, CSRF
+and cookie attributes must be explicit application responsibilities.
+
+**Cost:** the default in-process session disappears on a Render restart and the user
+must sign in again. That is acceptable for this single-instance assignment and is
+documented as a limitation.
+
+---
+
+## D-011 · Refuse deletion of the final passkey
+
+**Status:** decided · 2026-09-07
+
+A credential can be deleted only when its account has at least two. Deleting the
+last one returns 409 and the screen says to register another passkey first. Losing
+access to every registered authenticator still leaves no recovery route and is
+stated on the same screen and in the submission.
+
+**Reason:** deliberately creating an unreachable account to demonstrate the zero-key
+case would be an unsafe product rule. The rejection gives T08-C46 a visible,
+testable behavior while preserving the two-passkey recovery exercise.
+
+**Reverses if:** the assignment's missing official text explicitly requires a stored
+zero-credential account rather than asking what the product does in that case.
+
+---
+
+## D-012 · Keep private rendering and ownership on the server
+
+**Status:** decided · 2026-09-07
+
+`/private` is server-rendered only after an authentication interceptor accepts the
+session. Private repositories require account ID and controllers obtain it only
+from the session principal. URL or JSON account IDs never select ownership. A
+missing session is 401; a resource outside the current account is 404.
+
+**Reason:** this makes T08-C15 through C18 and C36 through C41 properties of the
+server response and query, rather than CSS or client state.
+
+---
+
+## D-013 · Use WebAuthn4J for verification and keep ceremony ownership local
+
+**Status:** decided · 2026-09-07
+
+WebAuthn4J verifies registration and authentication objects, expected origin,
+RP ID, challenge, user presence, user verification and signatures. Application code
+owns HTTP JSON, challenge lifetime, credential persistence, session creation,
+authorization and evidence redaction, matching the library's documented scope.
+
+The repository pins 0.31.8.RELEASE after a 2026-09-07 compatibility spike against
+Spring Boot 4.1.1 and its Jackson 3.1.5 dependency. The full build and a minimal
+registration/authentication parsing adapter loaded successfully. Keep verification
+behind that adapter and do not implement signature verification manually.
+
+---
+
+## D-014 · Carry T07's security method into T08, not its credentials
+
+**Status:** decided · 2026-09-07
+
+T08 uses the same SKT ALeph method as T07: explicit trust boundaries, server-side
+authorization, paired success/rejection evidence, central redaction, persistent
+rate/replay state, TLS-only production data paths and honest remaining-risk notes.
+It does not copy T07's password, JWT or refresh-token design. Those are replaced by
+WebAuthn public-key verification, database-held single-use challenges and an opaque
+server session.
+
+**Reason:** copying credential machinery would add forbidden password fields and
+unneeded bearer secrets. Reusing the threat and verification discipline preserves
+the useful security work while keeping T08 genuinely passkey-only.

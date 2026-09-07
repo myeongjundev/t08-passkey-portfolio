@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171914">
+  <title>패스키로 들어가기 — 김명준</title>
+  <meta name="description" content="비밀번호 없이 패스키로 들어가는 비공개 공간 안내입니다.">
+  <meta name="csrf-token" th:content="${csrfToken}">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/fonts/pretendard.css">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="access-page">
+  <main class="access-shell">
+    <a class="access-back" href="/">← 공개 소개로 돌아가기</a>
+    <section class="access-card" aria-labelledby="access-title">
+      <p class="section-index">PASSKEY ONLY · PRIVATE</p>
+      <h1 id="access-title">비밀번호 없는<br>나만의 공간</h1>
+      <p>표시 이름과 패스키 이름을 정한 뒤, 이 기기의 화면 잠금으로 비밀번호 없이 공간을 만드세요.</p>
+      <form class="passkey-form" id="passkey-registration-form">
+        <label>
+          <span>표시 이름</span>
+          <input name="displayName" maxlength="40" required autocomplete="name" value="합성 사용자">
+        </label>
+        <label>
+          <span>패스키 이름</span>
+          <input name="nickname" maxlength="40" required value="이 기기의 패스키">
+        </label>
+        <button class="button" type="submit">패스키 만들기</button>
+      </form>
+      <div class="access-login">
+        <span>이미 이 공간의 패스키가 있나요?</span>
+        <button class="button button--outline" id="passkey-login-button" type="button">패스키로 들어가기</button>
+      </div>
+      <div class="access-status" id="passkey-status" role="status" aria-live="polite">
+        <span aria-hidden="true">01</span>
+        <strong>준비되었습니다. 패스키는 이 기기나 연결된 관리자에 안전하게 보관됩니다.</strong>
+      </div>
+      <p class="synthetic-note">실제 개인정보는 사용하지 않으며, 생성되는 비공개 자료도 모두 만들어 넣은 샘플입니다. 취소하면 계정과 공개키는 저장되지 않습니다.</p>
+    </section>
+  </main>
+  <script src="/passkey.js" defer></script>
+</body>
+</html>

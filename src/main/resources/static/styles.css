@@ -146,6 +146,58 @@ code { padding: .1em .3em; background: var(--paper-deep); color: var(--forest); 
 .shot figcaption { display: grid; grid-template-columns: 2.5rem 1fr auto; gap: .75rem; align-items: baseline; padding-top: .9rem; font-size: .78rem; }
 .shot figcaption span, .shot figcaption em { color: var(--muted); font-size: .65rem; font-style: normal; }
 
+.private-boundary { display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(3rem, 8vw, 8rem); align-items: end; background: var(--forest); color: var(--paper); }
+.private-boundary .section-index { color: var(--lime); }
+.private-boundary h2 { font-size: clamp(2.8rem, 6vw, 6rem); line-height: 1; letter-spacing: -.06em; }
+.private-boundary h2 em { color: var(--lime); font-family: Georgia, "Times New Roman", serif; font-weight: 400; }
+.private-boundary__copy { display: grid; justify-items: start; gap: 1.4rem; }
+.private-boundary__copy > p { max-width: 34rem; color: #d7ddd5; font-size: 1rem; }
+.private-boundary__copy .button { border-color: var(--lime); background: var(--lime); color: var(--ink); }
+.private-boundary__copy small { color: #aeb9b0; }
+
+.access-page, .private-page { min-height: 100svh; background: var(--ink); color: var(--paper); }
+.access-shell, .private-shell { width: min(100%, var(--max)); min-height: 100svh; margin: auto; padding: clamp(2rem, 6vw, 5rem) var(--pad); }
+.access-shell { display: grid; align-content: space-between; gap: 4rem; }
+.access-back, .private-head a { width: fit-content; color: #c3c9c1; font-size: .78rem; font-weight: 700; text-decoration: none; }
+.access-card { max-width: 52rem; padding: clamp(2rem, 6vw, 5rem); border: 1px solid #465048; box-shadow: 1rem 1rem 0 var(--lime); }
+.access-card h1, .private-head h1 { font-size: clamp(3rem, 8vw, 7.5rem); line-height: .92; letter-spacing: -.065em; }
+.access-card > p:not(.section-index) { max-width: 40rem; margin-top: 2rem; color: #c3c9c1; }
+.passkey-form { margin-top: 2rem; display: grid; grid-template-columns: 1fr 1fr auto; gap: .8rem; align-items: end; }
+.passkey-form label { display: grid; gap: .45rem; color: #c3c9c1; font-size: .7rem; font-weight: 700; }
+.passkey-form input { min-width: 0; padding: .85rem 1rem; border: 1px solid #59625b; border-radius: 0; background: #202621; color: var(--paper); font: inherit; }
+.passkey-form input:focus { outline: 2px solid var(--lime); outline-offset: 2px; }
+.passkey-form .button { min-height: 3rem; border: 1px solid var(--lime); background: var(--lime); color: var(--ink); cursor: pointer; }
+.passkey-form .button:disabled { cursor: wait; opacity: .6; }
+.access-login { margin-top: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: #aeb9b0; font-size: .75rem; }
+.button--outline { border-color: #59625b !important; background: transparent !important; color: var(--paper) !important; }
+.access-status { margin-top: 2.5rem; padding: 1.2rem 0; display: flex; gap: 1rem; border-block: 1px solid #465048; }
+.access-status span { color: var(--lime); }
+.access-status.is-error span { color: var(--orange); }
+.access-card .synthetic-note { font-size: .75rem; }
+.private-shell { display: grid; align-content: start; gap: 2.5rem; }
+.private-head { display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: start; }
+.private-actions { display: grid; justify-items: end; gap: 1rem; }
+.passkey-manager { padding: 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 2rem; border: 1px solid #465048; background: #202621; }
+.passkey-manager h2 { font-size: clamp(2rem, 4vw, 3.5rem); }
+.passkey-manager > div > p:last-child, .passkey-warning { margin-top: .7rem; color: #abb4ac; font-size: .78rem; }
+.add-passkey-form { display: grid; grid-template-columns: 1fr auto; gap: .7rem; align-items: end; }
+.add-passkey-form label { display: grid; gap: .4rem; color: #abb4ac; font-size: .7rem; }
+.add-passkey-form input { min-width: 0; padding: .8rem; border: 1px solid #59625b; background: var(--ink); color: var(--paper); font: inherit; }
+.add-passkey-form .button { border: 1px solid var(--lime); background: var(--lime); color: var(--ink); }
+.passkey-list { grid-column: 1 / -1; display: grid; gap: .5rem; }
+.passkey-row { padding: .9rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid #465048; }
+.passkey-row div { display: grid; gap: .2rem; }
+.passkey-row time { color: #abb4ac; font-size: .7rem; }
+.passkey-delete { padding: .55rem .8rem; border: 1px solid #72554b; background: transparent; color: #f0b19a; cursor: pointer; }
+.passkey-warning, .manager-status { grid-column: 1 / -1; }
+.manager-status { min-height: 1.4em; color: var(--lime); font-size: .78rem; }
+.synthetic-banner { padding: 1rem 1.2rem; background: var(--lime); color: var(--ink); font-size: .78rem; font-weight: 700; }
+.private-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.private-item { min-height: 18rem; padding: 1.5rem; display: flex; flex-direction: column; border: 1px solid #465048; background: #202621; }
+.private-item > span { color: var(--orange); font: italic 1.7rem/1 Georgia, serif; }
+.private-item h2 { margin-top: auto; font-size: 1.45rem; line-height: 1.25; }
+.private-item p { margin-top: .8rem; color: #abb4ac; font-size: .85rem; }
+
 .contact { text-align: center; background: var(--lime); }
 .contact .section-index { color: var(--forest); }
 .contact h2 { font-size: clamp(2.8rem, 6.5vw, 6.5rem); line-height: 1; letter-spacing: -.06em; }
@@ -181,7 +233,7 @@ code { padding: .1em .3em; background: var(--paper-deep); color: var(--forest); 
   .hero { min-height: auto; grid-template-columns: 1fr; padding-top: 9rem; }
   .hero h1 { max-width: 13ch; }
   .dev-card { width: min(100%, 34rem); justify-self: end; }
-  .about, .project__intro { grid-template-columns: 1fr; }
+  .about, .project__intro, .private-boundary { grid-template-columns: 1fr; }
   .about__grid { grid-template-columns: 1fr; }
   .about__grid article { display: grid; grid-template-columns: 2rem 9rem 1fr; gap: 1rem; align-items: start; }
   .about__grid h3 { margin: 0; }
@@ -209,6 +261,10 @@ code { padding: .1em .3em; background: var(--paper-deep); color: var(--forest); 
   .case__story dl > div { grid-template-columns: 1fr; gap: .35rem; }
   .stack-block { grid-template-columns: 1fr; }
   .gallery__head, .gallery__grid { grid-template-columns: 1fr; }
+  .private-head, .private-grid { grid-template-columns: 1fr; }
+  .passkey-manager, .add-passkey-form { grid-template-columns: 1fr; }
+  .passkey-form { grid-template-columns: 1fr; }
+  .access-login { align-items: stretch; flex-direction: column; }
   .gallery__head p:last-child { justify-self: start; }
   .shot--wide { grid-column: auto; }
   .shot figcaption { grid-template-columns: 2rem 1fr; }

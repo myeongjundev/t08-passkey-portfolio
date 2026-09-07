@@ -9,6 +9,9 @@ T01에서 만든 개인 포트폴리오 페이지에 **패스키(WebAuthn)** 로
 
 [**Task**](docs/T08-TASK.md) ·
 [**Requirements**](docs/REQUIREMENTS.md) ·
+[**Architecture**](docs/T08-ARCHITECTURE.md) ·
+[**Implementation Plan**](docs/T08-IMPLEMENTATION-PLAN.md) ·
+[**Security & Network**](docs/T08-SECURITY-NETWORK.md) ·
 [**Acceptance Matrix**](docs/T08-ACCEPTANCE-MATRIX.md) ·
 [**Decision Log**](docs/DECISIONS.md) ·
 [**Status**](docs/STATUS.md)
@@ -17,8 +20,8 @@ T01에서 만든 개인 포트폴리오 페이지에 **패스키(WebAuthn)** 로
 
 </div>
 
-> 🚧 **작업 준비 단계입니다.** 공개 소개 페이지는 서버에서 정상적으로 뜨지만
-> 인증 구현은 아직 시작하지 않았습니다. 진행 상황은
+> 🚧 **구현 중입니다.** 공개·비공개 서버 경계와 보안 응답 헤더는 완료했고,
+> 패스키 등록·로그인 ceremony는 아직 구현 중입니다. 진행 상황은
 > [`docs/STATUS.md`](docs/STATUS.md)를 보세요.
 
 > 공개 화면과 문서의 예시는 합성 데이터입니다. 실제 연락처나 신분증 번호 같은

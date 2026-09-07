@@ -1,14 +1,239 @@
 # Status
 
 **Last updated:** 2026-09-07
-**Phase:** setup complete — the app runs and serves the public page. No passkey code yet.
+**Phase:** Cross-account isolation and write-up complete; deployment evidence remains.
 
-## Where things stand
+## 2026-09-07 cross-account isolation and write-up complete
 
-The repository is scaffolded, the assignment is transcribed, the stack is chosen, and
-a Spring Boot application serves the T01 intro page at `/`. Nothing about
-authentication is implemented yet — no private area, no WebAuthn endpoints, no
-persistence model.
+Two synthetic accounts now receive visibly distinct private bodies. Each account
+registered and authenticated with a separate P-256 passkey before the isolation
+checks. A→B and B→A direct item requests both returned the same 404, total row count
+stayed 6 before and after, and an A request carrying B's account ID still returned
+only A's three rows.
+
+Added `docs/evidence/08-cross-account-isolation.md`, the six-section
+`docs/T08-AUTH-GUIDE.md`, and `docs/T08-SUBMISSION.md` with the four-line verification
+recipe and AI/judgement split. T08-C36 through C41, C47 through C51 and C53 are done.
+C52 remains wip until its destination is replaced with the deployed URL.
+
+Verification: full build passed with 33 tests, 0 failures, 0 errors and 0 skipped.
+JavaScript syntax and diff whitespace checks passed. A focused scan found zero
+password-input, password-hash or PEM private-key patterns under `src/` and `docs/`.
+Remaining external gates are the actual passkey storage-provider note (C26), public
+GitHub/result HTTPS URLs, production PostgreSQL/HTTPS verification, and reconciliation
+of the missing official criteria C04 through C09.
+
+Troubleshooting note for Claude: the first combined PowerShell secret-scan command
+failed before execution because nested quote characters were parsed incorrectly.
+It was split into a build command and a fixed-pattern scan; both then passed. No
+application change was needed.
+
+## 2026-09-07 Card 4 second-passkey recovery complete
+
+The authenticated private screen now lists passkeys by human-readable nickname and
+registration date and can register a second discoverable credential. Existing
+credential IDs are placed in `excludeCredentials`. All management APIs are behind
+the authenticated session plus the shared Origin, JSON and CSRF checks.
+
+Deletion locks every credential row for the session account, hides cross-account
+targets as 404 and refuses to remove the final credential with 409. Tests register
+two independent P-256 credentials, delete the first, authenticate with the survivor,
+reject an assertion from the deleted credential, and verify the final credential
+and private data remain intact.
+
+Verification: `./gradlew.bat clean test build` passed with 32 tests, 0 failures,
+0 errors and 0 skipped. All three passkey/session browser scripts passed syntax
+checking. Evidence: `docs/evidence/07-second-passkey-recovery.md`. T08-C42 through
+C46 are done.
+
+Next target: T08-C36 through C41 cross-account isolation, followed by the two final
+submission documents. T08-C26 still needs the actual device/provider name from a
+manual physical passkey registration.
+
+## 2026-09-07 Card 3 authentication and logout complete
+
+Added username-less authentication options and browser `navigator.credentials.get()`.
+The finish path consumes its database ceremony first, looks up the credential and
+account from the returned credential ID, compares the discoverable credential's
+userHandle, reconstructs WebAuthn4J verification from the stored COSE public key,
+and verifies Origin, RP ID, challenge, UP/UV and signature before creating a session.
+
+Successful authentication advances supported sign counters and replaces the
+anonymous session and CSRF. Both-zero counters remain supported. Logout invalidates
+the server session; private access then returns 401 and the spent assertion cannot
+restore it. Live option fingerprints were `34a490f2b6a0` and `172b9ceb53e7`.
+
+Evidence: `docs/evidence/06-passkey-authentication.md`. T08-C27 through C35 are done.
+Final verification passed with 30 tests, 0 failures, 0 errors and 0 skipped; both
+browser scripts passed syntax checking. Credential authentication also holds a row
+lock while checking and updating the sign counter so concurrent assertions cannot
+silently overwrite one another.
+The next implementation target is Card 4: register a second passkey, list both with
+nickname/date, delete one, reject the deleted credential and prevent deleting the
+final credential.
+
+## 2026-09-07 Card 2 registration implementation complete
+
+The `/access` page now performs `navigator.credentials.create()` with no password
+field. The server verifies the returned registration with WebAuthn4J against the
+exact configured Origin, RP ID, server-held challenge, required user presence and
+required user verification. Only then does one transaction create the account,
+public-key credential and three account-scoped synthetic private items.
+
+Successful registration replaces the anonymous session and CSRF value before
+opening `/private`. Invalid Origin creates no account or credential and burns the
+challenge. Browser cancellation calls a dedicated endpoint, leaves account,
+credential and private-item counts at zero, and makes the ceremony unusable.
+
+Verification: `./gradlew.bat clean test build` passed with 25 tests, 0 failures,
+0 errors and 0 skipped. Evidence: `docs/evidence/05-registration-finish.md`.
+T08-C19 through C25 are done. T08-C26 remains pending because the physical storage
+provider must be recorded from an actual browser/authenticator ceremony.
+
+## 2026-09-07 registration options HTTP boundary complete
+
+The first Card 2 endpoint is live: `POST /api/webauthn/register/options`. `/access`
+bootstraps an anonymous server session; the endpoint requires JSON, the configured
+exact Origin and its session CSRF header before creating a row. It returns ES256 and
+RS256 options with discoverable credential and user verification required,
+attestation none, a 32-byte opaque user handle, and `Cache-Control: no-store`.
+
+Live local evidence produced two different challenge fingerprints
+(`402943e98cbe`, `f131b46e0fa0`), plus 403 for an attacker Origin and 415 for
+`text/plain`. Cookie and CSRF values were redacted. Evidence:
+`docs/evidence/04-registration-options-http.md`.
+
+Current automated total: 21 tests passed (8 ceremony, 3 registration HTTP,
+2 schema, 3 WebAuthn property and 5 application); 0 failures/errors/skips. Full
+build passes.
+
+Additional troubleshooting note for Claude: Flyway 12.4 reports that Boot's H2
+2.4.240 is newer than its latest verified H2 2.3.232. The migration and validation
+tests pass. Keep the warning visible until the dependency set moves or PostgreSQL
+integration supersedes the development check.
+
+## 2026-09-07 Slice 2 complete — schema and single-use ceremony
+
+Flyway now owns an H2/PostgreSQL-compatible V1 schema for accounts, passkey public
+credentials, WebAuthn ceremonies, private items and redacted security events. JPA
+runs with `ddl-auto=validate`; schema inspection confirms there is no password or
+private-key column.
+
+`CeremonyService` creates independent 32-byte values with `SecureRandom`, expires
+them after five minutes, keeps one active row per opaque session owner and ceremony
+kind, and consumes the first finish attempt in a `REQUIRES_NEW` transaction under a
+pessimistic row lock. Replay, expiry, kind mismatch, owner mismatch and two-thread
+concurrent consumption are covered. Evidence:
+`docs/evidence/03-server-held-ceremony.md`.
+
+Verification: 14 tests passed, 0 failed/error/skipped, and
+`./gradlew.bat clean test build` completed successfully.
+
+Troubleshooting notes for Claude:
+
+- Spring Boot 4 splits Flyway auto-configuration into its own module. Depending on
+  `flyway-core` alone left Hibernate validation ahead of migration and reported
+  `missing table [accounts]`. Replacing it with
+  `spring-boot-starter-flyway` loaded the Boot 4 initializer.
+- Replacing an active ceremony initially dirtied the old entity and inserted the
+  new row in one flush; Hibernate issued the INSERT before the UPDATE and the active
+  slot UNIQUE constraint rejected it. Saving and flushing the old consumed row
+  before the new insert fixed the order without weakening the constraint.
+
+## 2026-09-07 SKT ALeph security/network baseline adopted
+
+Added `docs/T08-SECURITY-NETWORK.md` and D-014. T08 now carries forward T07's trust
+boundary, paired negative evidence, centralized redaction, persistent replay/rate
+state and TLS deployment discipline without copying its password/JWT/refresh-token
+credentials. The concrete T08 boundaries are browser → Render edge → Spring Boot →
+Neon TLS, plus the separate authenticator boundary.
+
+The first executable control is also in place: every response now receives CSP,
+clickjacking, MIME sniffing, referrer, opener and passkey Permissions-Policy headers.
+The public integration test fixes these headers as a regression gate. HSTS remains
+production-only and will not be claimed until the HTTPS deployment is tested.
+Local response evidence: `docs/evidence/02-security-response-headers.md`.
+
+## 2026-09-07 WebAuthn4J compatibility gate passed
+
+Upgraded `webauthn4j-core` from 0.29.1.RELEASE to 0.31.8.RELEASE. Spring Boot's
+dependency management selects Jackson 3.1.5 over WebAuthn4J's requested 3.1.4, so
+the earlier Jackson 2/3 split is gone. A small adapter compiles registration and
+authentication parsing paths, loads in the full Spring context, and the build
+passes. Evidence: `docs/evidence/00-webauthn4j-compatibility.md`.
+
+## 2026-09-07 Card 1 complete
+
+Implemented the first vertical slice for T08-C13 through T08-C18. The T01 public
+portfolio remains open, now ending in a visually distinct passkey boundary and a
+public `/access` explanation page. `/private`, `/private/**`,
+`/api/private-items`, and `/api/private-items/**` are protected by one server-side
+session interceptor and return `401` with `Cache-Control: no-store` before a
+controller can render private data.
+
+The authenticated rendering path contains three clearly labelled synthetic items.
+The current data service is intentionally an in-memory seam for Card 1 and will be
+replaced by account-scoped persistence in the next slices. It does not accept an
+account ID from the route or request.
+
+Verification completed:
+
+- `./gradlew.bat clean test build`: **BUILD SUCCESSFUL**.
+- 3 Card 1 integration tests and 1 compatibility test passed; 0 failures,
+  errors or skips.
+- Live HTTP: `/` 200, `/access` 200, `/private` 401,
+  `/api/private-items` 401.
+- Public response contained none of the three private titles and no password input.
+- Browser rendered the new boundary and the `/access` page successfully.
+- Evidence: `docs/evidence/01-public-private-boundary.md`.
+
+Troubleshooting note for Claude: the initial test compile used the pre-Boot-4 import
+`org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc` and
+failed. Spring Boot 4.1.1 provides the annotation at
+`org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc`; changing
+that import resolved the failure. No runtime implementation change was required.
+
+## 2026-09-07 full implementation design complete
+
+Added `docs/T08-ARCHITECTURE.md` and `docs/T08-IMPLEMENTATION-PLAN.md`. The design now
+fixes the whole path from the public T01 page through passkey-first account creation,
+discoverable credential registration, database-held single-use ceremonies,
+username-less assertion, server sessions, CSRF/Origin guards, account-scoped private
+queries, second-passkey management, evidence and Render/Neon deployment.
+
+D-007 resolves D-005: a verified first passkey creates the account; there are no
+pre-seeded accounts, invites or passwords. D-008 through D-013 record the discoverable
+credential policy, challenge consumption, session boundary, final-passkey deletion
+guard, server ownership and WebAuthn4J scope. No application code or fixed criterion
+changed. T08-C04 through C09 remain an explicit official-source blocker, and the
+WebAuthn4J 0.31.8 compatibility spike is the first dependency gate before Card 2.
+
+## 2026-09-07 Codex readiness verification
+
+The repository is ready for Card 1 implementation. No application file changed in
+this check.
+
+- Compared `C:\gov\SKT_ALEPH\T08\T08.md` with `docs/T08-TASK.md`: the content diff
+  reports them identical.
+- Compared all seven source card images by SHA-256: every file matches its copy in
+  `docs/task-source/`.
+- Ran `.\gradlew.bat clean test build`: **BUILD SUCCESSFUL**, 8 tasks executed.
+- Started the application and checked `/`, `/styles.css`, and `/script.js`: all
+  returned 200. `/private` and `/api/private` returned 404 because Card 1 has not
+  created those routes yet.
+- The rendered public HTML contains no password input. Its existing Korean word
+  `비공개` belongs to the T01 public privacy statement, not to T08 private content.
+- Reconfirmed the official-source gate: D-003 still needs the official source for
+  missing criteria T08-C04 through C09. D-005 was later resolved by D-007 without
+  guessing any missing criterion text.
+
+Handoff target remains Card 1: choose at least three synthetic private items, then
+add the server-side `/private/**` boundary and its unauthenticated response tests.
+
+## Historical scaffold snapshot (superseded)
+
+This section records the repository state before implementation began. The current
+state is described at the top of this file.
 
 ## Done
 
@@ -24,34 +249,31 @@ persistence model.
       `src/main/resources/templates/index.html` + `src/main/resources/static/`
 - [x] `HomeController` serves `/`; verified `200` for `/`, `/styles.css`, `/script.js`
 
-## Open decisions (blocking implementation)
+## Open decisions
 
 | ID | Question |
 | --- | --- |
 | D-003 | Criteria T08-C04 – T08-C09 are not in the captured images and must be reconciled against the official assignment page. |
-| D-005 | How two passwordless accounts get created. |
+
+D-003 blocks the final completeness claim, not Card 1 implementation. D-005 is
+resolved by D-007: successful first-passkey registration creates the account.
 
 ## Next steps
 
-1. **Card 1 — carve out the private area** (T08-C13 – C18). The only card that does
-   not need WebAuthn working, so it is the right first slice.
-   - Decide the three-plus synthetic private items.
-   - Add a `HandlerInterceptor` guarding `/private/**`, returning 401 or 403.
-   - Render the private block in `index.html` only when the session is authenticated,
-     and capture the unauthenticated response body as evidence for C18.
-2. Resolve D-005, then **Card 2 — registration** (T08-C19 – C26): challenge issuance
-   and storage, `navigator.credentials.create`, `webauthn4j` registration
-   verification, public key persistence, nickname, cancel handling.
-3. **Card 3 — authentication** (T08-C27 – C35): per-request challenge,
+1. Run the WebAuthn4J compatibility spike, then **Card 2 — registration**
+   (T08-C19 – C26): challenge issuance and storage,
+   `navigator.credentials.create`, `webauthn4j` registration verification,
+   public key persistence, nickname, cancel handling.
+2. **Card 3 — authentication** (T08-C27 – C35): per-request challenge,
    `navigator.credentials.get`, signature verification, session establishment,
    replay rejection, logout.
-4. **Card 4 — second passkey** (T08-C42 – C46): credential list screen, deletion,
+3. **Card 4 — second passkey** (T08-C42 – C46): credential list screen, deletion,
    sign-in with the survivor, zero-passkey state.
-5. **Card 5 — isolation and write-up** (T08-C36 – C41, C47 – C53): second account,
+4. **Card 5 — isolation and write-up** (T08-C36 – C41, C47 – C53): second account,
    cross-account rejection in both directions, `docs/T08-AUTH-GUIDE.md`,
    `docs/T08-SUBMISSION.md`.
-6. Resolve D-003 against the official assignment page before submitting.
-7. Deploy over HTTPS. **Note:** `t08.webauthn.rp-id` and `t08.webauthn.origin` in
+5. Resolve D-003 against the official assignment page before submitting.
+6. Deploy over HTTPS. **Note:** `t08.webauthn.rp-id` and `t08.webauthn.origin` in
    `application.properties` are currently `localhost` and must be overridden per
    environment — WebAuthn rejects an origin mismatch.
 
@@ -64,9 +286,9 @@ persistence model.
 
 ## Evidence captured
 
-None yet. `docs/evidence/` awaits the paired request/response records required by
-T08-C50.
+Card 1 request/response and source-isolation record:
+`docs/evidence/01-public-private-boundary.md`.
 
 ## Handoff target
 
-Next session: start Card 1 — the private area and its server-side gate.
+Next session: run the WebAuthn4J compatibility spike, then start Card 2 registration.

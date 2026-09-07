@@ -101,6 +101,25 @@ assignment page and fill the gap in the acceptance matrix.
 - ⑥ must name **at least one concrete** remaining weakness. "Nothing" does not pass.
   (T08-C51)
 
+## R9 · SKT ALeph security and network baseline
+
+- Production has one canonical HTTPS origin. WebAuthn expected origin and RP ID come
+  from trusted configuration, never from request forwarding headers.
+- Every state-changing endpoint checks JSON content type, exact Origin and session
+  CSRF. Passkey challenges are cryptographically random, database-held, short-lived
+  and consumed once even when verification fails.
+- Private repositories select ownership only from the server session account ID.
+- Session cookies are Secure, HttpOnly and SameSite=Lax in production; authentication
+  rotates the session ID and logout invalidates it server-side.
+- Render connects to Neon with PostgreSQL TLS. Secrets remain server environment
+  variables and never enter source, frontend bundles, responses or committed evidence.
+- Security events and evidence share central redaction. Raw challenge, credential
+  JSON, signature, session/CSRF value, DB secret and original IP are prohibited.
+- Response headers, rate limits, payload limits, negative authorization paths and
+  secret-pattern audits are automated gates, not final manual checks.
+
+Detailed control matrix: `docs/T08-SECURITY-NETWORK.md`.
+
 ## Non-goals
 
 - No password authentication of any kind.
