@@ -88,3 +88,42 @@ Do not treat Vercel's build `Ready` status alone as application readiness.
 - No physical passkey or account was created during this automated verification.
 
 No database password, session cookie, CSRF token or credential payload is included.
+
+## Cold-start appearance — 2026-09-08
+
+The startup gate keeps the container alive through Vercel's 15-second window, but a
+visitor who arrives during that window is what the gate returns. Measured against
+production at 16:16 KST, after the container had been idle since roughly 15:35:
+
+```text
+HTTP/1.1 503 Service Unavailable
+Cache-Control: no-store
+Content-Type: text/plain;charset=UTF-8
+Retry-After: 2
+Server: Vercel
+X-Vercel-Id: icn1::icn1::gp6dw-...
+
+Service is starting. Please retry shortly.
+```
+
+The headers confirm this is the application's own response rather than a Vercel
+platform error page, so what the gate writes is exactly what a visitor reads. Two
+facts follow. The container scales to zero within about forty minutes of idling, so a
+reviewer opening the URL cold is the ordinary case, not the exception. And a line of
+English plain text is what they would read on the first screen that T08-C10 requires
+to be the public intro page.
+
+Probe sequence before the change (cold, three consecutive requests):
+
+| # | Status | Time |
+| --- | --- | --- |
+| 1 | 503 | 12.1s |
+| 2 | 503 | 0.11s |
+| 3 | 200 | 0.08s |
+
+**Change:** a request whose `Accept` includes `text/html` now receives a small page
+that refreshes itself every two seconds, matching `Retry-After`. Everything else --
+`fetch`, `curl`, the APIs, the deployment verification script -- keeps the plain text
+and the same status. The gate still refuses to serve application content before
+`ApplicationReadyEvent`, which is what `ContainerStartupConfigurationTests` asserts
+for both response shapes.

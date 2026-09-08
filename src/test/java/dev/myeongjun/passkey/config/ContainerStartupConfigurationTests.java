@@ -51,24 +51,43 @@ class ContainerStartupConfigurationTests {
         @Lazy(false)
         SmartInitializingSingleton socketProbe(WebServerApplicationContext context) {
             return () -> {
-                // Before Spring is ready, the socket is reachable but only the
-                // startup gate may respond, never application/private content.
-                try (Socket socket = new Socket("localhost", context.getWebServer().getPort())) {
-                    socket.setSoTimeout(2000);
-                    socket.getOutputStream().write(
-                            "GET /private HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n"
-                                    .getBytes(StandardCharsets.US_ASCII));
-                    socket.getOutputStream().flush();
-                    String response = new String(socket.getInputStream().readAllBytes(),
-                            StandardCharsets.UTF_8);
-                    assertThat(response).startsWith("HTTP/1.1 503")
+                int port = context.getWebServer().getPort();
+                try {
+                    // Before Spring is ready, the socket is reachable but only the
+                    // startup gate may respond, never application/private content.
+                    String api = earlyRequest(port, "GET /private HTTP/1.1\r\n"
+                            + "Host: localhost\r\nConnection: close\r\n\r\n");
+                    assertThat(api).startsWith("HTTP/1.1 503")
                             .contains("Cache-Control: no-store")
                             .endsWith("Service is starting. Please retry shortly.");
+
+                    // A browser gets a page that reloads itself rather than that line, so a
+                    // visitor arriving during a cold start is not left deciding whether the
+                    // site is broken. It stays a 503 and still carries no private content.
+                    String browser = earlyRequest(port, "GET / HTTP/1.1\r\n"
+                            + "Host: localhost\r\nAccept: text/html,application/xhtml+xml\r\n"
+                            + "Connection: close\r\n\r\n");
+                    assertThat(browser).startsWith("HTTP/1.1 503")
+                            .contains("Cache-Control: no-store")
+                            .contains("Content-Type: text/html;charset=UTF-8")
+                            .contains("http-equiv=\"refresh\"")
+                            .doesNotContain("Service is starting. Please retry shortly.");
+
                     observedBoundButNotServing.set(true);
                 } catch (Exception exception) {
                     throw new IllegalStateException("Early socket boundary check failed", exception);
                 }
             };
+        }
+
+        /** Speaks HTTP over a raw socket: the gate only answers before Spring is ready. */
+        private static String earlyRequest(int port, String request) throws Exception {
+            try (Socket socket = new Socket("localhost", port)) {
+                socket.setSoTimeout(2000);
+                socket.getOutputStream().write(request.getBytes(StandardCharsets.US_ASCII));
+                socket.getOutputStream().flush();
+                return new String(socket.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            }
         }
     }
 }

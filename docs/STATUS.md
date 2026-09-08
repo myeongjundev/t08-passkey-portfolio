@@ -9,6 +9,31 @@
 > See `docs/evidence/11-production-startup.md`. Physical passkey verification (C26)
 > and the author's C53 wording remain. C04–C09 are closed — they were never issued.
 
+## 2026-09-08 — the cold-start screen is now a page, not a line of English
+
+The startup gate added in `eebe09e` solved the deployment failure: reserving the
+socket early and answering 503 until Spring is ready keeps the container inside
+Vercel's 15-second window instead of being killed. What it did not address is what a
+visitor sees while that is happening.
+
+Measured against production: the container had gone idle by 16:16 KST after being
+warm around 15:35, and a cold request returned the gate's own 503 with
+`Service is starting. Please retry shortly.` The response headers show it is the
+application's, not a Vercel error page. Forty minutes of idle is short enough that a
+reviewer opening the URL cold is the ordinary case, and T08-C10 asks for the public
+intro page on the first screen.
+
+Requests that accept `text/html` now get a small self-refreshing page instead, with
+the refresh interval matching the existing `Retry-After: 2`. The visitor waits a few
+seconds and lands on the real page without touching anything. Non-browser callers --
+`curl`, `fetch`, the APIs, `scripts/Verify-Deployment.ps1` -- are unchanged: same
+status, same plain text, so nothing that reads the boundary programmatically shifts.
+
+The gate's guarantee is untouched. It still serves no application content before
+`ApplicationReadyEvent`, and `ContainerStartupConfigurationTests` now asserts that for
+both response shapes over a raw socket, including that the browser page carries no
+private content. Full build: **38 tests, 0 failures, 0 errors, 0 skipped**.
+
 ## 2026-09-08 — C04–C09 closed: the assignment never issued them
 
 D-003 had been open since 2026-09-07 on the possibility that a card had been missed
