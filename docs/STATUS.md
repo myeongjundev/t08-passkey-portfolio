@@ -9,6 +9,29 @@
 > See `docs/evidence/11-production-startup.md`. Physical passkey verification,
 > C26, the author's C53 wording and missing official criteria C04–C09 remain.
 
+## 2026-09-08 — re-vendored the T01 page after it gained the builds section
+
+T01 published `ef6fac2`, adding a `04 / ALEPH BUILDS` section that lists T02 through
+T08. The vendored copy here was still at `0ec47fc`, so the two public pages had
+started to diverge: a reviewer opening both would have seen an older portfolio on the
+T08 side. C11 was not violated — every piece of T01 content was still present — but
+the divergence was avoidable.
+
+Re-vendored `index.html`, `styles.css` and `script.js` from `ef6fac2` and replayed the
+three T08-only edits on top: the `Private` nav link, the `private-boundary` section,
+and the renumbering that follows from inserting it. Sections now run 01 ABOUT,
+02 FEATURED WORK, 03 SELECTED SCREENS, 04 ALEPH BUILDS, 05 PUBLIC ENDS HERE,
+06 CONTACT. D-002 now records both vendoring points.
+
+Verified: a diff against upstream `ef6fac2` shows only those three edits and nothing
+else; `script.js` is byte-identical. Full build passed with **38 tests, 0 failures,
+0 errors, 0 skipped**. Locally the rendered public page carries six build cards, both
+nav entries, no password input, and no private content — the only occurrences of
+"비공개" are the public boundary copy.
+
+The RP ID, origin and database are unchanged, so registered passkeys survive this
+deployment.
+
 ## 2026-09-08 — Vercel production deployment healthy
 
 Commit `eebe09e` adds an opt-in production startup boundary: Tomcat reserves port 80

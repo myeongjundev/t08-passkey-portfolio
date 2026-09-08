@@ -59,9 +59,19 @@ at the T08 deployment.
 
 **Status:** decided · 2026-09-07
 
-`public/` holds a copy of `index.html`, `script.js`, `styles.css`, `favicon.svg`,
-`assets/`, and `fonts/` taken from `myeongjundev/myeongjundev.github.io` at commit
-`0ec47fc79e4e6a57382d9d4e6ef4413725e6c135`.
+`src/main/resources/templates/index.html` plus `src/main/resources/static/`
+(`script.js`, `styles.css`, `favicon.svg`, `assets/`, `fonts/`) hold a copy taken
+from `myeongjundev/myeongjundev.github.io`.
+
+| Vendored at | T01 commit | Note |
+| --- | --- | --- |
+| 2026-09-07 | `0ec47fc79e4e6a57382d9d4e6ef4413725e6c135` | first vendoring |
+| 2026-09-08 | `ef6fac2d27b98c47dc86082817582a11eebfbd96` | T01 added its `04 / ALEPH BUILDS` section |
+
+Re-vendoring replays exactly three T08-only edits on top of the upstream file: the
+`Private` nav link, the `private-boundary` section, and the section renumbering that
+follows from inserting it. Keeping that list short is the point — a large local
+delta would make each upstream change a merge.
 
 An iframe or a runtime fetch would make the public first screen depend on another
 origin being up, and would complicate proving T08-C18 (no private content in the
