@@ -6,10 +6,11 @@ requirements the implementation must satisfy.
 
 ## Reconciliation status
 
-⚠️ **Preliminary.** The requirements below are transcribed from the assignment card
-images under `docs/task-source/`. Criteria **T08-C04 – T08-C09 are missing from those
-images.** Before implementation is called complete, reconcile against the official
-assignment page and fill the gap in the acceptance matrix.
+The requirements below are transcribed from the assignment card images under
+`docs/task-source/`. The criterion numbers run C01–C03 and then continue at C10:
+**T08-C04 – T08-C09 were never issued.** A second student's copy of the assignment
+skips the same range, so the gap is in the assignment's numbering rather than in this
+transcription. See `docs/DECISIONS.md` D-003.
 
 ## R1 · Public surface is unchanged and stays open
 

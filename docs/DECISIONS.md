@@ -82,17 +82,20 @@ commit here.
 
 ---
 
-## D-003 · Criteria T08-C04 – T08-C09 are unknown and must be reconciled
+## D-003 · Criteria T08-C04 – T08-C09 do not exist
 
-**Status:** open · 2026-09-07
+**Status:** resolved · 2026-09-08 (opened 2026-09-07)
 
-The assignment card images under `docs/task-source/` cover C01–C03, C10–C53. The
-range C04–C09 does not appear in any captured image. Judging by their position among
-the submission-URL criteria, they are likely further general submission rules.
+The assignment card images under `docs/task-source/` cover C01–C03 and then continue
+at C10. The concern was that the capture had lost a card, which would have left six
+graded criteria silently unmet.
 
-**Action:** check the official assignment page and fill
-`docs/T08-ACCEPTANCE-MATRIX.md` before final submission. Do not assume they are
-satisfied.
+Checked against another student's copy of the same assignment: it skips the identical
+range. Three independent readings — the captured cards, the transcription in
+`T08/T08.md`, and that second copy — all run C03 → C10.
+
+**Conclusion:** the assignment's numbering skips C04–C09. Nothing is missing and
+nothing needs to be filled in. The acceptance matrix is complete as it stands.
 
 ---
 

@@ -6,8 +6,25 @@
 > 읽으세요. 실행 순서, 완료 조건, 복구 절차가 최신 상태로 정리돼 있습니다.
 
 > **Current deployment:** healthy at `https://t08-passkey-portfolio.vercel.app`.
-> See `docs/evidence/11-production-startup.md`. Physical passkey verification,
-> C26, the author's C53 wording and missing official criteria C04–C09 remain.
+> See `docs/evidence/11-production-startup.md`. Physical passkey verification (C26)
+> and the author's C53 wording remain. C04–C09 are closed — they were never issued.
+
+## 2026-09-08 — C04–C09 closed: the assignment never issued them
+
+D-003 had been open since 2026-09-07 on the possibility that a card had been missed
+when the assignment was captured, which would have left six graded criteria silently
+unmet. It was the one blocker here that no amount of work on this repository could
+close.
+
+Another student's copy of the same assignment skips the identical range. That makes
+three independent readings — the captured cards, the transcription in `T08/T08.md`,
+and that second copy — all running C03 straight to C10. The gap is in the
+assignment's numbering, not in the capture.
+
+`DECISIONS.md` D-003 is resolved, and the warnings in `REQUIREMENTS.md` and
+`T08-ACCEPTANCE-MATRIX.md` now say what is true: nothing is missing, and the matrix
+is complete as it stands. No criterion status changed, because none of these six ever
+existed to be met.
 
 ## 2026-09-08 — re-vendored the T01 page after it gained the builds section
 

@@ -70,9 +70,10 @@ Evidence paths are relative to `docs/evidence/`.
 | T08-C11 | 1번 과제에서 만든 소개 페이지에 이어 붙였고, 1번의 공개 내용이 그대로 남아 있다. | done | 01-public-private-boundary.md · 11-production-startup.md |
 | T08-C12 | 제출물에 실제 개인정보가 없고, 넣은 내용이 만들어 넣은 것이라는 사실이 적혀 있다. | done | 01-public-private-boundary.md · ../T08-SUBMISSION.md |
 
-> **T08-C04 – T08-C09 are not captured in the source images.** They are presumably
-> further general submission rules. Confirm against the official assignment page
-> before final submission and fill them in here. See `docs/DECISIONS.md` D-003.
+> **T08-C04 – T08-C09 do not exist.** The assignment numbers its criteria C01–C03
+> and then continues at C10; the range in between was never issued. This was checked
+> against a second student's copy of the assignment, which skips the same way. The
+> gap is a numbering gap, not a transcription loss. See `docs/DECISIONS.md` D-003.
 
 ### Cross-account isolation
 
