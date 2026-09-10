@@ -10,6 +10,13 @@
 표준 `navigator.credentials.create()`와 `navigator.credentials.get()`을 사용합니다.
 로그인 뒤 사용자를 알아보는 값은 JWT가 아니라 서버의 `HttpSession`입니다.
 
+잠금을 여는 수단은 비밀번호가 아니라 **기기의 지문 인증**입니다. 등록과 로그인 모두
+`userVerification: "required"`로 요청하므로, 기기가 사용자 확인을 마쳐야만 서명이
+만들어집니다. Windows Hello에서는 지문, 맥에서는 Touch ID, 휴대폰에서는 지문·얼굴이
+이 자리를 담당합니다. 지문 데이터 자체는 기기 밖으로 나오지 않습니다. 지문은 기기 안에
+있는 개인키를 꺼내는 열쇠로만 쓰이고, 서버가 받아서 저장하는 것은 공개키와 서명뿐입니다.
+서버에는 생체정보가 저장되지 않습니다.
+
 ## ② 왜 이것을 골랐나
 
 WebAuthn의 challenge, RP ID hash, Origin, 사용자 확인, 공개키 서명을 직접 구현하면 작은
@@ -33,6 +40,13 @@ Spring Boot와 PostgreSQL은 포트폴리오의 주력 서버 기술과 배포 �
   ID만 사용해 조회합니다. URL의 accountId는 소유권 입력으로 사용하지 않습니다.
 - 복구: `PasskeyController`와 `PasskeyManagementService`가 두 번째 패스키 등록·목록·삭제를
   처리하며 마지막 하나의 삭제는 409로 막습니다.
+- 사용자 확인(지문): 등록 options의 `authenticatorSelection`을
+  `userVerification=required`로 고정했습니다
+  (`WebAuthnController:141`, `PasskeyController:76`). 로그인 options도 같은 값을 내려보내
+  (`AuthenticationOptionsResponse`) 두 번째 패스키를 쓸 때도 지문을 건너뛸 수 없습니다.
+  검증 단계에서도 `WebAuthnVerificationAdapter`가 WebAuthn4J에 `userVerificationRequired=true`를
+  넘기므로(`:77` 등록, `:147` 로그인), 지문을 거치지 않아 UV 플래그가 꺼진 응답은 서명이
+  맞더라도 거절됩니다. 옵션에서 요구하는 데 그치지 않고 서버 검증에서 다시 강제합니다.
 
 ## ④ 안 열리는 것을 확인한 기록
 
