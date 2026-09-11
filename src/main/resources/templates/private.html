@@ -42,6 +42,7 @@
           <div>
             <strong th:text="${passkey.nickname}">이 기기의 패스키</strong>
             <time th:datetime="${passkey.registeredAt}" th:text="${#temporals.format(passkey.registeredAt, 'yyyy-MM-dd')}">2026-09-07</time>
+            <span class="passkey-storage" th:classappend="${passkey.synced} ? 'passkey-storage--synced' : 'passkey-storage--device'" th:text="${passkey.storageLabel}">이 기기 전용</span>
           </div>
           <button class="passkey-delete" type="button" th:attr="data-passkey-id=${passkey.id}">삭제</button>
         </article>

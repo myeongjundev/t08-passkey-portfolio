@@ -38,6 +38,30 @@ those would take C17's evidence with it. Full build: **42 tests, 0 failures**.
 
 Recorded in `docs/evidence/12-real-device-registration.md` and in `T08-AUTH-GUIDE.md` ⑥.
 
+## 2026-09-11 — the passkey list now says where each key lives
+
+The real-device session exposed a second problem, quieter than the 500: the person who
+had just registered the passkey did not know where it had been saved, and had to go
+digging in the phone's settings to answer C26.
+
+The server already knew. `backupEligible` separates a synced credential from a
+device-bound one and `transports` separates this device from a phone reached by QR or a
+security key; both arrive with the registration and both were already persisted.
+`PasskeyView` simply never carried them past the service, so the list showed a nickname
+and a date and nothing else. `PasskeyStorage` turns the two flags into the words the
+assignment uses, and each row now carries them as a badge.
+
+Two things went wrong in the wording before the tests settled it. The first attempt
+produced "이 기기 전용 · 이 기기", which says the same thing twice. The second is more
+interesting: Android reports `internal` *and* `hybrid` for a single Google Password
+Manager passkey — made here, also reachable from elsewhere — and where it was made is
+the more useful half when someone has to tell two rows apart before deleting one. A
+security key outranks both, because it is the whole answer by itself.
+
+This is C26 evidence the screen produces on its own rather than a claim in prose, it
+widens C43, and it gives card 4 something to judge by before an irreversible delete.
+`PasskeyStorageTests` holds the rules. Full build: **50 tests, 0 failures**.
+
 ## 2026-09-11 — the passkey entrance moved to the first screen
 
 The only way into the passkey area was section 05, four scrolls down, on an assignment

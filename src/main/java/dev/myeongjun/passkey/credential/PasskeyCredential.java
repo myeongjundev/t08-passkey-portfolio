@@ -98,6 +98,15 @@ public class PasskeyCredential {
         return transports;
     }
 
+    /**
+     * True when the authenticator says the credential may be backed up, which is what
+     * separates a synced passkey from one bound to this device. Describes the
+     * authenticator, never the key material.
+     */
+    public boolean backupEligible() {
+        return backupEligible;
+    }
+
     public void recordAuthentication(long newSignCount, boolean newBackupState, OffsetDateTime usedAt) {
         signCount = newSignCount;
         backupState = newBackupState;

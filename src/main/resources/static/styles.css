@@ -214,6 +214,9 @@ code { padding: .1em .3em; background: var(--paper-deep); color: var(--forest); 
 .passkey-row { padding: .9rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid #465048; }
 .passkey-row div { display: grid; gap: .2rem; }
 .passkey-row time { color: #abb4ac; font-size: .7rem; }
+.passkey-storage { justify-self: start; margin-top: .15rem; padding: .2rem .45rem; border: 1px solid currentColor; font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .6rem; font-weight: 700; letter-spacing: .06em; }
+.passkey-storage--synced { color: var(--lime); }
+.passkey-storage--device { color: #e8a48c; }
 .passkey-delete { padding: .55rem .8rem; border: 1px solid #72554b; background: transparent; color: #f0b19a; cursor: pointer; }
 .passkey-warning, .manager-status { grid-column: 1 / -1; }
 .manager-status { min-height: 1.4em; color: var(--lime); font-size: .78rem; }

@@ -95,7 +95,14 @@ public class PasskeyManagementService {
     }
 
     private PasskeyView view(PasskeyCredential credential) {
-        return new PasskeyView(credential.id(), credential.nickname(), credential.registeredAt());
+        PasskeyStorage storage = PasskeyStorage.describe(credential.backupEligible(), credential.transports());
+        return new PasskeyView(
+                credential.id(),
+                credential.nickname(),
+                credential.registeredAt(),
+                storage.synced(),
+                storage.label()
+        );
     }
 
     private OffsetDateTime now() {
