@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171914">
+  <title>잠시 문제가 있었습니다</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/fonts/pretendard.css">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="access-page">
+  <main class="access-shell">
+    <a class="access-back" href="/">← 공개 소개로 돌아가기</a>
+    <section class="access-card" aria-labelledby="error-title">
+      <p class="section-index">ERROR <span th:text="${status}">500</span></p>
+      <h1 id="error-title">잠시 문제가<br>있었습니다</h1>
+      <p>요청을 끝내지 못했습니다. 대부분 새로고침 한 번으로 넘어갑니다. 공개 소개 페이지는 이 문제와 무관하게 열립니다.</p>
+      <div class="access-login">
+        <span>같은 화면을 다시 열어 봅니다.</span>
+        <button class="button button--outline" type="button" onclick="window.location.reload()">새로고침</button>
+      </div>
+      <div class="access-status" role="status">
+        <span aria-hidden="true">!</span>
+        <strong>비공개 자료는 이 화면에 실려 나오지 않습니다. 로그인 상태는 그대로입니다.</strong>
+      </div>
+      <p class="synthetic-note">이 안내에는 서버 내부 정보가 들어 있지 않습니다. 계속 같은 화면이 나오면 잠시 뒤 다시 시도해 주세요.</p>
+    </section>
+  </main>
+</body>
+</html>

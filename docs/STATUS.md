@@ -9,6 +9,44 @@
 > See `docs/evidence/11-production-startup.md`. Physical passkey verification (C26)
 > and the author's C53 wording remain. C04–C09 are closed — they were never issued.
 
+## 2026-09-11 — the first real device found what the virtual one could not
+
+A passkey was registered from an actual phone, then logged out and logged back in.
+Everything the automated suite asserts held. One thing it does not cover did not: the
+screen right after the fingerprint prompt came back 500, and a refresh landed on the
+private area normally.
+
+The ceremony itself had succeeded. `/private` is guarded by `AuthenticationInterceptor`,
+which answers 401 and never reaches the controller when the session is absent, so a 500
+means the request had already been authenticated and failed while building the view.
+`AccountRegistrationService.finish` is `@Transactional`, so the account, the public key
+and the three synthetic items were committed before that. The refresh and the later
+re-login both worked, which they could not have if anything were missing.
+
+**The cause is not established.** Vercel's runtime log was not in hand and the path did
+not reproduce. `/private` reads private items, the passkey list and the CSRF token in one
+request, so a momentary Supabase connection failure is the likeliest reading — but that is
+inference, not a measurement, and it is written down as such rather than as a fix.
+
+What did change is what a visitor sees when it happens. There was no `templates/error.html`,
+so Spring's Whitelabel page was the 500 screen. It now renders the site's own page with a
+refresh action, and four `server.error.include-*` settings are pinned so no server internals
+ride along. `ErrorPageHttpTests` holds the replacement to its two obligations: say nothing
+about the server, and leave the JSON boundary alone — unauthenticated `/private` and
+`/api/private-items` must still answer **401 JSON**, because an error view that swallowed
+those would take C17's evidence with it. Full build: **42 tests, 0 failures**.
+
+Recorded in `docs/evidence/12-real-device-registration.md` and in `T08-AUTH-GUIDE.md` ⑥.
+
+## 2026-09-11 — the passkey entrance moved to the first screen
+
+The only way into the passkey area was section 05, four scrolls down, on an assignment
+whose subject is the passkey. The boundary section stays where it is — "public ends here"
+only means something after the public content — so a second entrance was added directly
+under the hero intro instead, in the same forest/lime as section 05 so the two read as one
+thing. T01's page was diffed line by line afterwards: nothing of it was removed, which is
+what C11 asks.
+
 ## 2026-09-08 — the cold-start screen is now a page, not a line of English
 
 The startup gate added in `eebe09e` solved the deployment failure: reserving the
