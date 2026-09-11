@@ -38,6 +38,18 @@ those would take C17's evidence with it. Full build: **42 tests, 0 failures**.
 
 Recorded in `docs/evidence/12-real-device-registration.md` and in `T08-AUTH-GUIDE.md` ⑥.
 
+## 2026-09-11 — the real-device screens went into both artifacts
+
+Two screenshots from the phone now sit in the deck (slide 9) and the PDF (page 10): the
+passkey list showing `동기화됨 · 이 기기`, and the Google Password Manager sheet that names
+the same credential. Together they carry C26 as a picture rather than only as a sentence —
+a reviewer can see that the page's own claim about where the key lives agrees with the
+operating system's credential list, without opening any settings.
+
+The status bar and the navigation bar were cropped off; the address bar was kept, because
+which site this is *is* the evidence. The account Google displays starts with `synthetic-`,
+so the decision to keep the display name synthetic is visible on the device too.
+
 ## 2026-09-11 — a deck and a submission PDF, built from screens that were actually driven
 
 The evidence so far lived as prose and curl transcripts in `docs/evidence/`. Two artifacts

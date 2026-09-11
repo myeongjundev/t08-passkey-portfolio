@@ -310,6 +310,40 @@ function card(slide, x, y, w, h, dark) {
   });
 }
 
+/* 8b — 실물 기기 */
+{
+  const s = page(true, "C26 · REAL DEVICE");
+  head(s, "실물 기기에서 확인했습니다", "가상 인증기가 아니라 실제 휴대폰으로 등록하고, 로그아웃한 뒤 같은 패스키로 다시 들어갔습니다.", true);
+  const PW = 2.1, PH = PW * 2132 / 1080;
+  if (has("phone-01-passkey-list.png"))
+    s.addImage({ path: shot("phone-01-passkey-list.png"), x: 0.75, y: 2.35, w: PW, h: PH });
+  if (has("phone-02-google-manager.png"))
+    s.addImage({ path: shot("phone-02-google-manager.png"), x: 0.75 + PW + 0.3, y: 2.35, w: PW, h: PH });
+  const capX = 0.75 + PW * 2 + 0.9;
+  s.addText("두 화면이 같은 것을 가리킵니다", {
+    x: capX, y: 2.45, w: W - capX - 0.75, h: 0.4, isTextBox: true, margin: 0,
+    fontFace: F, fontSize: 15, bold: true, color: C.lime,
+  });
+  s.addText([
+    { text: "왼쪽 — 목록의 “동기화됨 · 이 기기” 배지", options: { bullet: true, breakLine: true } },
+    { text: "오른쪽 — 보관처가 Google 비밀번호 관리자임을 확인해 주는 창", options: { bullet: true, breakLine: true } },
+    { text: "기기 자체도 보안 키도 아닙니다", options: { bullet: true } },
+  ], {
+    x: capX, y: 3.05, w: W - capX - 0.75, h: 1.8, isTextBox: true, margin: 0,
+    fontFace: F, fontSize: 12, color: C.pale, paraSpaceAfter: 8, lineSpacing: 17,
+  });
+  card(s, capX, 4.95, W - capX - 0.75, 1.55, true);
+  s.addText("심사하는 사람이 기기 설정을 열지 않아도 웹 화면만으로 저장 위치를 알 수 있고, 그 진술이 운영체제의 자격증명 목록과 어긋나지 않는다는 것이 이 두 장으로 확인됩니다.", {
+    x: capX + 0.25, y: 5.15, w: W - capX - 1.25, h: 1.2, isTextBox: true, margin: 0,
+    fontFace: F, fontSize: 11, color: C.pale, lineSpacing: 16,
+  });
+  s.addText("계정명이 synthetic- 으로 시작합니다. 실명이 들어가지 않았다는 사실이 기기 화면으로도 확인됩니다.", {
+    x: capX, y: 6.6, w: W - capX - 0.75, h: 0.6, isTextBox: true, margin: 0,
+    fontFace: F, fontSize: 10, italic: true, color: C.line, lineSpacing: 14,
+  });
+  foot(s, "실물 안드로이드 기기 · 크롬 · 2026-09-11 · 상단 알림줄과 하단 내비게이션 바는 잘라냈습니다", true);
+}
+
 /* 9 — 두 개 → 삭제 → 재로그인 */
 {
   const s = page(false, "C42 ~ C45");
