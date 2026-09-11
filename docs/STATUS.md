@@ -38,6 +38,33 @@ those would take C17's evidence with it. Full build: **42 tests, 0 failures**.
 
 Recorded in `docs/evidence/12-real-device-registration.md` and in `T08-AUTH-GUIDE.md` ⑥.
 
+## 2026-09-11 — a deck and a submission PDF, built from screens that were actually driven
+
+The evidence so far lived as prose and curl transcripts in `docs/evidence/`. Two artifacts
+now carry it in a form a reviewer can page through: `output/presentation/T08-evidence.pptx`
+(14 slides) and `output/pdf/T08-final-submission.pdf` (13 pages, carrying all 47 criteria
+with their evidence files, the screens, and the working sequence).
+
+The screens were not mocked. Public pages were read from production; everything behind the
+lock was driven on a local instance through a CDP virtual authenticator that performed a
+real registration, a second registration, a deletion, a refused final deletion, and a
+sign-in with the surviving passkey. Production's database was not written to. The second
+passkey was deliberately registered over a security-key transport so one screen shows the
+storage badge splitting into `동기화됨 · 이 기기` and `보안 키`.
+
+Three defects came out of reviewing the rendered pages rather than the generating code, and
+all three were the same kind: **Consolas carries no Hangul, so Korean set in the monospace
+face vanished silently** — no error, no box, just a gap. It had eaten a chip label, a
+footer, and the Korean half of a grep pattern in a command block. Korean now renders in
+Malgun everywhere, with `<font name="MONO">` mixed in where a path or command needs it.
+Also fixed: a criterion column overlapping its evidence column, and two images running past
+the page into the footer.
+
+Generators are kept next to the artifacts — `scripts/capture-evidence.py`,
+`scripts/build-evidence-deck.mjs`, `scripts/build-submission-pdf.py` — so a changed screen
+can be re-shot and both files rebuilt rather than patched by hand. Source screens are in
+`docs/evidence/images/`.
+
 ## 2026-09-11 — C26 closed on a real device: the matrix is 47/47
 
 The passkey registered from the phone is held in **Google Password Manager**, and both
