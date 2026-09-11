@@ -38,6 +38,25 @@ those would take C17's evidence with it. Full build: **42 tests, 0 failures**.
 
 Recorded in `docs/evidence/12-real-device-registration.md` and in `T08-AUTH-GUIDE.md` ⑥.
 
+## 2026-09-11 — C26 closed on a real device: the matrix is 47/47
+
+The passkey registered from the phone is held in **Google Password Manager**, and both
+halves of the screen say so: the list row reads `동기화됨 · 이 기기`, and the Google
+dialog that opens for registration and sign-in carries the same account. Android and
+Chrome. `T08-SUBMISSION.md` now states it with the environment and the date.
+
+The badge added earlier today is what made this a screen reading rather than a trip into
+the phone's settings, which is the point — C26 asks for a statement in the submission,
+and the statement and the screen now name the same thing.
+
+One detail worth keeping: the account Google displays is a `synthetic-` identifier. The
+decision to leave the display name synthetic carries all the way into the operating
+system's own credential list, so the absence of real personal data is visible on the
+device and not only in the server's rows.
+
+**This was the last open criterion.** All 47 are done. `docs/evidence/12-real-device-registration.md`
+holds the record.
+
 ## 2026-09-11 — the passkey list now says where each key lives
 
 The real-device session exposed a second problem, quieter than the 500: the person who

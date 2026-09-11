@@ -31,7 +31,7 @@ Evidence paths are relative to `docs/evidence/`.
 | T08-C23 | 개인키가 서버로 전송되지 않는다는 사실이, 등록 요청 본문을 적은 기록으로 확인된다. | done | 05-registration-finish.md |
 | T08-C24 | 등록한 패스키에 사람이 알아볼 수 있는 이름이 붙는다. | done | 05-registration-finish.md |
 | T08-C25 | 등록을 중간에 취소하면 화면에 안내가 나오고, 서버에 아무것도 저장되지 않는다. | done | 05-registration-finish.md |
-| T08-C26 | 패스키를 저장한 곳이 어디인지(구글 비밀번호 관리자·기기 자체·보안 키 중 무엇인지)가 제출문에 적혀 있다. | todo | |
+| T08-C26 | 패스키를 저장한 곳이 어디인지(구글 비밀번호 관리자·기기 자체·보안 키 중 무엇인지)가 제출문에 적혀 있다. | done | ../T08-SUBMISSION.md · 12-real-device-registration.md |
 
 ## Card 3 — Sign in with a passkey
 
